@@ -16,6 +16,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import Link from 'next/link';
 
 export default function LandingPage() {
   const heroImage = placeholderImages.find((img) => img.id === 'hero');
@@ -147,8 +148,12 @@ export default function LandingPage() {
         <div className="container px-4 flex flex-col sm:flex-row justify-between items-center text-sm text-muted-foreground">
             <p>&copy; {new Date().getFullYear()} SONGNATION. Todos os direitos reservados.</p>
             <div className="flex gap-4 mt-4 sm:mt-0">
-                <Button variant="link" className="text-muted-foreground">Termos de Serviço</Button>
-                <Button variant="link" className="text-muted-foreground">Política de Privacidade</Button>
+                <Link href="/terms" passHref>
+                  <Button variant="link" className="text-muted-foreground">Termos de Serviço</Button>
+                </Link>
+                <Link href="/privacy" passHref>
+                  <Button variant="link" className="text-muted-foreground">Política de Privacidade</Button>
+                </Link>
             </div>
         </div>
       </footer>
