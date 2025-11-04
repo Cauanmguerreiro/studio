@@ -10,8 +10,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        body: ['Inter', 'sans-serif'],
-        headline: ['Hammersmith One', 'sans-serif'],
+        body: ['"Comic Neue"', 'cursive'],
+        headline: ['"Luckiest Guy"', 'cursive'],
         code: ['monospace'],
       },
       colors: {
@@ -78,10 +78,15 @@ export default {
             height: '0',
           },
         },
+         wiggle: {
+          '0%, 100%': { transform: 'rotate(-3deg)' },
+          '50%': { transform: 'rotate(3deg)' },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
+        wiggle: 'wiggle 2s ease-in-out infinite',
       },
     },
   },
