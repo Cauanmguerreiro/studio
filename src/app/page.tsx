@@ -50,51 +50,6 @@ export default function LandingPage() {
         </div>
       </section>
       
-      {/* Features Section */}
-      <section className="py-16 md:py-24 bg-muted">
-        <div className="container px-4">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div className="space-y-4">
-                <Badge variant="outline">Plataforma Completa</Badge>
-                <h2 className="text-3xl md:text-4xl font-bold">Tudo que você precisa em um só lugar</h2>
-                <p className="text-lg text-muted-foreground">
-                    Desde a busca pela batida perfeita até a formalização dos direitos autorais, a SONGNATION simplifica cada etapa do processo.
-                </p>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <Card className="p-6">
-                    <CardContent className="flex flex-col items-center text-center">
-                        <ShieldCheck className="h-10 w-10 text-primary mb-4" />
-                        <h3 className="font-bold text-lg">Licenciamento Seguro</h3>
-                        <p className="text-muted-foreground text-sm mt-1">Transações protegidas e contratos inteligentes para sua tranquilidade.</p>
-                    </CardContent>
-                </Card>
-                 <Card className="p-6">
-                    <CardContent className="flex flex-col items-center text-center">
-                        <Search className="h-10 w-10 text-primary mb-4" />
-                        <h3 className="font-bold text-lg">Busca Inteligente</h3>
-                        <p className="text-muted-foreground text-sm mt-1">Filtre por gênero, humor, BPM e encontre a composição ideal para seu projeto.</p>
-                    </CardContent>
-                </Card>
-                 <Card className="p-6">
-                    <CardContent className="flex flex-col items-center text-center">
-                        <Users className="h-10 w-10 text-primary mb-4" />
-                        <h3 className="font-bold text-lg">Colaboração</h3>
-                        <p className="text-muted-foreground text-sm mt-1">Conecte-se com outros talentos, co-crie e divida os royalties de forma justa.</p>
-                    </CardContent>
-                </Card>
-                 <Card className="p-6">
-                    <CardContent className="flex flex-col items-center text-center">
-                        <Wand2 className="h-10 w-10 text-primary mb-4" />
-                        <h3 className="font-bold text-lg">Ferramentas IA</h3>
-                        <p className="text-muted-foreground text-sm mt-1">Gere letras, otimize SEO e encontre inspiração com nossa suíte de IA.</p>
-                    </CardContent>
-                </Card>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Genres Section */}
       <section className="py-16 md:py-24 bg-background">
         <div className="container px-4 text-center">
