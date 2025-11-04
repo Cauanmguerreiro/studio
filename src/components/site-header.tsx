@@ -17,10 +17,6 @@ export function SiteHeader() {
             </span>
           </Link>
         </div>
-        <div className="flex items-center gap-2">
-            <Button variant="ghost">Login</Button>
-            <Button>Cadastre-se</Button>
-        </div>
       </div>
     </header>
   );
