@@ -1,152 +1,313 @@
 'use client';
 
-import { useState, useMemo } from 'react';
-import Image from 'next/image';
-import { compositions, genres } from '@/lib/data';
-import { CompositionCard } from '@/components/composition-card';
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from '@/components/ui/carousel';
-import { Input } from '@/components/ui/input';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { Button } from '@/components/ui/button';
-import { Search } from 'lucide-react';
-import { GenreIcons } from '@/components/icons';
-import { placeholderImages } from '@/lib/placeholder-images.json';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Textarea } from '@/components/ui/textarea';
+import { Loader2, Send, PartyPopper } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+import { Toaster } from '@/components/ui/toaster';
 
-export default function HomePage() {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [activeGenre, setActiveGenre] = useState<string | 'All'>('All');
+const roles = [
+  { id: 'composer', label: 'Composer/Songwriter' },
+  { id: 'artist', label: 'Artist/Singer' },
+  { id: 'producer', label: 'Producer' },
+  { id: 'other', label: 'Other' },
+];
 
-  const featuredCompositions = useMemo(
-    () => compositions.slice(0, 5),
-    []
-  );
+const formSchema = z.object({
+  role: z.string().min(1, 'Please select your primary role in the music industry.'),
+  findComposition: z.string().min(1, 'This field is required.'),
+  sellComposition: z.string().min(1, 'This field is required.'),
+  challenges: z.array(z.string()).refine((value) => value.some((item) => item), {
+    message: 'You have to select at least one item.',
+  }),
+  features: z.array(z.string()).refine((value) => value.some((item) => item), {
+    message: 'You have to select at least one item.',
+  }),
+  comments: z.string().optional(),
+});
 
-  const filteredCompositions = useMemo(() => {
-    return compositions
-      .filter((composition) =>
-        activeGenre === 'All' ? true : composition.genre === activeGenre
-      )
-      .filter((composition) =>
-        composition.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        composition.artist.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-  }, [searchQuery, activeGenre]);
+type FormValues = z.infer<typeof formSchema>;
 
-  const heroImage = placeholderImages.find(p => p.id === 'hero');
+export default function SurveyPage() {
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const { toast } = useToast();
+
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      role: '',
+      findComposition: '',
+      sellComposition: '',
+      challenges: [],
+      features: [],
+      comments: '',
+    },
+  });
+
+  async function onSubmit(values: FormValues) {
+    setIsLoading(true);
+    console.log('Survey Data:', values);
+    
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    toast({
+      title: "Submission successful!",
+      description: "Thank you for your valuable feedback.",
+    });
+
+    setIsLoading(false);
+    setIsSubmitted(true);
+  }
+
+  if (isSubmitted) {
+    return (
+      <div className="flex flex-col items-center justify-center text-center py-20">
+        <PartyPopper className="h-16 w-16 text-primary" />
+        <h1 className="mt-6 font-headline text-4xl font-bold">Thank You!</h1>
+        <p className="mt-2 max-w-md text-lg text-muted-foreground">
+          Your feedback is incredibly valuable and will help shape the future of SongRise. We appreciate you taking the time to share your thoughts.
+        </p>
+      </div>
+    );
+  }
 
   return (
-    <div className="space-y-12">
-      <section className="relative -mx-8 -mt-6 h-[400px] w-auto overflow-hidden rounded-b-2xl">
-        {heroImage && (
-            <Image
-                src={heroImage.imageUrl}
-                alt={heroImage.description}
-                fill
-                data-ai-hint={heroImage.imageHint}
-                className="object-cover"
-                priority
-            />
-        )}
-        <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/0 to-background/0" />
-        <div className="absolute bottom-0 left-0 p-8">
-          <h1 className="font-headline text-5xl font-bold text-foreground drop-shadow-lg">
-            Find Your Next Hit
-          </h1>
-          <p className="mt-2 max-w-lg text-lg text-foreground/80 drop-shadow-md">
-            Discover and acquire unique musical compositions from Brazil's best talents.
-          </p>
-        </div>
-      </section>
+    <div className="max-w-3xl mx-auto">
+      <div className="text-center mb-8">
+        <h1 className="font-headline text-4xl font-bold tracking-tight">Help Us Build the Future of Music</h1>
+        <p className="mt-2 text-lg text-muted-foreground">
+          We're exploring an idea for a platform for musical compositions and we need your expert opinion.
+        </p>
+      </div>
 
-      <section>
-        <h2 className="font-headline text-3xl font-semibold tracking-tight">
-          Featured Compositions
-        </h2>
-        <Carousel
-          opts={{
-            align: 'start',
-            loop: true,
-          }}
-          className="mt-4 w-full"
-        >
-          <CarouselContent>
-            {featuredCompositions.map((comp) => (
-              <CarouselItem key={comp.id} className="md:basis-1/2 lg:basis-1/3">
-                <div className="p-1">
-                  <CompositionCard composition={comp} />
-                </div>
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          <CarouselPrevious className="-left-4" />
-          <CarouselNext className="-right-4" />
-        </Carousel>
-      </section>
+      <Card>
+        <CardHeader>
+          <CardTitle>Market Research Survey</CardTitle>
+          <CardDescription>Your feedback will help us understand the needs of the music community.</CardDescription>
+        </CardHeader>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <CardContent className="space-y-8">
+              <FormField
+                control={form.control}
+                name="role"
+                render={({ field }) => (
+                  <FormItem className="space-y-3">
+                    <FormLabel className="font-semibold">What is your primary role in the music industry?</FormLabel>
+                    <FormControl>
+                      <RadioGroup
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        className="flex flex-col space-y-1"
+                      >
+                        {roles.map((role) => (
+                           <FormItem key={role.id} className="flex items-center space-x-3 space-y-0">
+                             <FormControl>
+                               <RadioGroupItem value={role.id} />
+                             </FormControl>
+                             <FormLabel className="font-normal">{role.label}</FormLabel>
+                           </FormItem>
+                        ))}
+                      </RadioGroup>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-      <section>
-        <h2 className="font-headline text-3xl font-semibold tracking-tight">
-          Discover
-        </h2>
-        <div className="mt-4 flex flex-col gap-6">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-            <Input
-              placeholder="Search by title or artist..."
-              className="pl-10 w-full"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-          <div className="flex flex-wrap items-center gap-2">
-            <Button
-              variant={activeGenre === 'All' ? 'default' : 'outline'}
-              onClick={() => setActiveGenre('All')}
-              className="rounded-full"
-            >
-              All Genres
-            </Button>
-            {genres.map((genre) => {
-              const Icon = GenreIcons[genre as keyof typeof GenreIcons];
-              return (
-                <Button
-                  key={genre}
-                  variant={activeGenre === genre ? 'default' : 'outline'}
-                  onClick={() => setActiveGenre(genre)}
-                  className="rounded-full"
-                >
-                  <Icon className="mr-2 h-4 w-4" />
-                  {genre}
-                </Button>
-              );
-            })}
-          </div>
-        </div>
+              <FormField
+                control={form.control}
+                name="findComposition"
+                render={({ field }) => (
+                  <FormItem className="space-y-3">
+                    <FormLabel className="font-semibold">As an artist or producer, how often do you look for new, original compositions to record?</FormLabel>
+                    <FormControl>
+                      <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex flex-col space-y-1">
+                        <FormItem className="flex items-center space-x-3 space-y-0">
+                          <FormControl><RadioGroupItem value="frequently" /></FormControl>
+                          <FormLabel className="font-normal">Frequently</FormLabel>
+                        </FormItem>
+                        <FormItem className="flex items-center space-x-3 space-y-0">
+                          <FormControl><RadioGroupItem value="sometimes" /></FormControl>
+                          <FormLabel className="font-normal">Sometimes</FormLabel>
+                        </FormItem>
+                         <FormItem className="flex items-center space-x-3 space-y-0">
+                          <FormControl><RadioGroupItem value="rarely" /></FormControl>
+                          <FormLabel className="font-normal">Rarely / Never</FormLabel>
+                        </FormItem>
+                      </RadioGroup>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+               <FormField
+                control={form.control}
+                name="sellComposition"
+                render={({ field }) => (
+                  <FormItem className="space-y-3">
+                    <FormLabel className="font-semibold">As a composer, have you ever wanted to sell your compositions to other artists?</FormLabel>
+                    <FormControl>
+                      <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex flex-col space-y-1">
+                        <FormItem className="flex items-center space-x-3 space-y-0">
+                          <FormControl><RadioGroupItem value="yes-actively" /></FormControl>
+                          <FormLabel className="font-normal">Yes, I actively try to.</FormLabel>
+                        </FormItem>
+                        <FormItem className="flex items-center space-x-3 space-y-0">
+                          <FormControl><RadioGroupItem value="yes-interested" /></FormControl>
+                          <FormLabel className="font-normal">I've thought about it and would be interested.</FormLabel>
+                        </FormItem>
+                         <FormItem className="flex items-center space-x-3 space-y-0">
+                          <FormControl><RadioGroupItem value="no" /></FormControl>
+                          <FormLabel className="font-normal">No, I haven't considered it.</FormLabel>
+                        </FormItem>
+                      </RadioGroup>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-        {filteredCompositions.length > 0 ? (
-          <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {filteredCompositions.map((composition) => (
-              <CompositionCard key={composition.id} composition={composition} />
-            ))}
-          </div>
-        ) : (
-          <div className="mt-16 flex flex-col items-center justify-center text-center">
-            <div className="rounded-full border bg-secondary p-6">
-              <Search className="h-12 w-12 text-muted-foreground" />
-            </div>
-            <h3 className="mt-4 font-headline text-2xl font-semibold">
-              No Compositions Found
-            </h3>
-            <p className="mt-2 text-muted-foreground">
-              Try adjusting your search or filters to find what you're looking for.
-            </p>
-          </div>
-        )}
-      </section>
+              <FormField
+                control={form.control}
+                name="challenges"
+                render={() => (
+                  <FormItem>
+                     <div className="mb-4">
+                      <FormLabel className="font-semibold">What are the biggest challenges you face when trying to connect with other music professionals (e.g., composers finding artists, artists finding songs)? (Select all that apply)</FormLabel>
+                     </div>
+                      {[
+                        { id: 'networking', label: 'Lack of networking opportunities' },
+                        { id: 'discovery', label: 'Difficulty discovering new talent/material' },
+                        { id: 'legal', label: 'Complexity of contracts and rights' },
+                        { id: 'trust', label: 'Trust and security in transactions' }
+                      ].map((item) => (
+                        <FormField
+                          key={item.id}
+                          control={form.control}
+                          name="challenges"
+                          render={({ field }) => {
+                            return (
+                              <FormItem key={item.id} className="flex flex-row items-start space-x-3 space-y-0">
+                                <FormControl>
+                                  <Checkbox
+                                    checked={field.value?.includes(item.id)}
+                                    onCheckedChange={(checked) => {
+                                      return checked
+                                        ? field.onChange([...field.value, item.id])
+                                        : field.onChange(
+                                            field.value?.filter(
+                                              (value) => value !== item.id
+                                            )
+                                          )
+                                    }}
+                                  />
+                                </FormControl>
+                                <FormLabel className="font-normal">{item.label}</FormLabel>
+                              </FormItem>
+                            )
+                          }}
+                        />
+                      ))}
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="features"
+                render={() => (
+                  <FormItem>
+                    <div className="mb-4">
+                     <FormLabel className="font-semibold">Which features would be most valuable in a marketplace for music compositions? (Select all that apply)</FormLabel>
+                    </div>
+                     {[
+                        { id: 'search', label: 'Advanced search by genre, mood, etc.' },
+                        { id: 'previews', label: 'Listening to song previews/demos' },
+                        { id: 'secure', label: 'Secure intellectual property transactions' },
+                        { id: 'collaboration', label: 'Tools for collaboration between artists and composers' }
+                      ].map((item) => (
+                        <FormField
+                          key={item.id}
+                          control={form.control}
+                          name="features"
+                          render={({ field }) => {
+                            return (
+                              <FormItem key={item.id} className="flex flex-row items-start space-x-3 space-y-0">
+                                <FormControl>
+                                   <Checkbox
+                                    checked={field.value?.includes(item.id)}
+                                    onCheckedChange={(checked) => {
+                                      return checked
+                                        ? field.onChange([...field.value, item.id])
+                                        : field.onChange(
+                                            field.value?.filter(
+                                              (value) => value !== item.id
+                                            )
+                                          )
+                                    }}
+                                  />
+                                </FormControl>
+                                <FormLabel className="font-normal">{item.label}</FormLabel>
+                              </FormItem>
+                            )
+                          }}
+                        />
+                      ))}
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="comments"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="font-semibold">Do you have any other comments, ideas, or suggestions?</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Tell us what you think..."
+                        className="resize-none"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </CardContent>
+            <CardFooter>
+              <Button type="submit" disabled={isLoading} className="w-full">
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Submitting...
+                  </>
+                ) : (
+                  <>
+                    <Send className="mr-2 h-4 w-4" />
+                    Submit Feedback
+                  </>
+                )}
+              </Button>
+            </CardFooter>
+          </form>
+        </Form>
+      </Card>
     </div>
   );
 }
