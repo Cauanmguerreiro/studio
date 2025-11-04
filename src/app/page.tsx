@@ -74,10 +74,10 @@ export default function SurveyPage() {
   if (isSubmitted) {
     return (
       <div className="flex flex-col items-center justify-center text-center py-20">
-        <PartyPopper className="h-16 w-16 text-primary animate-bounce-slow" />
-        <h1 className="mt-6 font-headline text-5xl font-bold animate-wiggle">THANK YOU, HUMAN!</h1>
+        <PartyPopper className="h-16 w-16 text-primary" />
+        <h1 className="mt-6 text-4xl font-bold tracking-tight">Thank You</h1>
         <p className="mt-2 max-w-md text-lg text-muted-foreground">
-          Your brain data has been successfully harvested! It will help us build our musical empire. We appreciate your unwitting contribution.
+          Your feedback is important to us. It will help us build a better platform for the future of music.
         </p>
       </div>
     );
@@ -85,17 +85,17 @@ export default function SurveyPage() {
 
   return (
     <div className="max-w-3xl mx-auto">
-      <div className="text-center mb-8">
-        <h1 className="font-headline text-5xl font-bold tracking-tight animate-wiggle">Help Us Conquer the Music World!</h1>
-        <p className="mt-2 text-lg text-muted-foreground">
-          We have a totally normal idea for a music platform. Spill your brain beans for us.
+      <div className="text-center mb-12">
+        <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">The Future of Music IP</h1>
+        <p className="mt-4 text-lg text-muted-foreground">
+          Help us understand the needs of the music industry by answering a few short questions.
         </p>
       </div>
 
-      <Card className="border-4 border-primary">
+      <Card>
         <CardHeader>
-          <CardTitle>Top Secret Market Research</CardTitle>
-          <CardDescription>Your answers are definitely not being used for world domination. Promise.</CardDescription>
+          <CardTitle>Market Research Survey</CardTitle>
+          <CardDescription>Your answers will help shape the future of our platform.</CardDescription>
         </CardHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -105,7 +105,7 @@ export default function SurveyPage() {
                 name="role"
                 render={({ field }) => (
                   <FormItem className="space-y-3">
-                    <FormLabel className="font-semibold text-lg">What's your deal in the music biz?</FormLabel>
+                    <FormLabel className="font-semibold">What is your primary role in the music industry?</FormLabel>
                     <FormControl>
                       <RadioGroup
                         onValueChange={field.onChange}
@@ -117,7 +117,7 @@ export default function SurveyPage() {
                              <FormControl>
                                <RadioGroupItem value={role.id} />
                              </FormControl>
-                             <FormLabel className="font-normal text-base">{role.label}</FormLabel>
+                             <FormLabel className="font-normal">{role.label}</FormLabel>
                            </FormItem>
                         ))}
                       </RadioGroup>
@@ -132,20 +132,20 @@ export default function SurveyPage() {
                 name="findComposition"
                 render={({ field }) => (
                   <FormItem className="space-y-3">
-                    <FormLabel className="font-semibold text-lg">How often are you desperately hunting for fresh choons to record?</FormLabel>
+                    <FormLabel className="font-semibold">How often do you look for new compositions to record or perform?</FormLabel>
                     <FormControl>
                       <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex flex-col space-y-1">
                         <FormItem className="flex items-center space-x-3 space-y-0">
                           <FormControl><RadioGroupItem value="frequently" /></FormControl>
-                          <FormLabel className="font-normal text-base">All the time, I'm a machine!</FormLabel>
+                          <FormLabel className="font-normal">Frequently</FormLabel>
                         </FormItem>
                         <FormItem className="flex items-center space-x-3 space-y-0">
                           <FormControl><RadioGroupItem value="sometimes" /></FormControl>
-                          <FormLabel className="font-normal text-base">When the moon is right.</FormLabel>
+                          <FormLabel className="font-normal">Sometimes</FormLabel>
                         </FormItem>
                          <FormItem className="flex items-center space-x-3 space-y-0">
                           <FormControl><RadioGroupItem value="rarely" /></FormControl>
-                          <FormLabel className="font-normal text-base">I write my own masterpieces, thank you.</FormLabel>
+                          <FormLabel className="font-normal">Rarely or never</FormLabel>
                         </FormItem>
                       </RadioGroup>
                     </FormControl>
@@ -159,20 +159,20 @@ export default function SurveyPage() {
                 name="sellComposition"
                 render={({ field }) => (
                   <FormItem className="space-y-3">
-                    <FormLabel className="font-semibold text-lg">Ever wanted to sell your musical babies to strangers?</FormLabel>
+                    <FormLabel className="font-semibold">Have you ever considered selling the rights to your original compositions?</FormLabel>
                     <FormControl>
                       <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex flex-col space-y-1">
                         <FormItem className="flex items-center space-x-3 space-y-0">
                           <FormControl><RadioGroupItem value="yes-actively" /></FormControl>
-                          <FormLabel className="font-normal text-base">Yes, my genius must be shared (for cash).</FormLabel>
+                          <FormLabel className="font-normal">Yes, I am actively looking for ways to do so.</FormLabel>
                         </FormItem>
                         <FormItem className="flex items-center space-x-3 space-y-0">
                           <FormControl><RadioGroupItem value="yes-interested" /></FormControl>
-                          <FormLabel className="font-normal text-base">The thought has tickled my brain pickles.</FormLabel>
+                          <FormLabel className="font-normal">I would be interested if there was a simple way.</FormLabel>
                         </FormItem>
                          <FormItem className="flex items-center space-x-3 space-y-0">
                           <FormControl><RadioGroupItem value="no" /></FormControl>
-                          <FormLabel className="font-normal text-base">No, they are my precious creations.</FormLabel>
+                          <FormLabel className="font-normal">No, I am not interested.</FormLabel>
                         </FormItem>
                       </RadioGroup>
                     </FormControl>
@@ -187,13 +187,13 @@ export default function SurveyPage() {
                 render={() => (
                   <FormItem>
                      <div className="mb-4">
-                      <FormLabel className="font-semibold text-lg">What's the biggest pain in your musical rear? (Pick some)</FormLabel>
+                      <FormLabel className="font-semibold">What are the biggest challenges you face in the music industry? (Select all that apply)</FormLabel>
                      </div>
                       {[
-                        { id: 'networking', label: 'Talking to other humans is hard.' },
-                        { id: 'discovery', label: 'Finding good stuff is like finding a unicorn.' },
-                        { id: 'legal', label: 'Contracts are written in goblin language.' },
-                        { id: 'trust', label: 'Everyone is a shady weirdo.' }
+                        { id: 'networking', label: 'Networking and connecting with other professionals.' },
+                        { id: 'discovery', label: 'Discovering new talent or compositions.' },
+                        { id: 'legal', label: 'Navigating contracts and legal issues.' },
+                        { id: 'trust', label: 'Ensuring trust and transparency in transactions.' }
                       ].map((item) => (
                         <FormField
                           key={item.id}
@@ -204,7 +204,6 @@ export default function SurveyPage() {
                               <FormItem key={item.id} className="flex flex-row items-start space-x-3 space-y-0">
                                 <FormControl>
                                   <Checkbox
-                                    className="transform scale-125"
                                     checked={field.value?.includes(item.id)}
                                     onCheckedChange={(checked) => {
                                       return checked
@@ -217,7 +216,7 @@ export default function SurveyPage() {
                                     }}
                                   />
                                 </FormControl>
-                                <FormLabel className="font-normal text-base">{item.label}</FormLabel>
+                                <FormLabel className="font-normal">{item.label}</FormLabel>
                               </FormItem>
                             )
                           }}
@@ -234,13 +233,13 @@ export default function SurveyPage() {
                 render={() => (
                   <FormItem>
                     <div className="mb-4">
-                     <FormLabel className="font-semibold text-lg">What magic tricks should our platform do? (Choose your spells)</FormLabel>
+                     <FormLabel className="font-semibold">Which features would be most valuable in a music IP marketplace? (Select all that apply)</FormLabel>
                     </div>
                      {[
-                        { id: 'search', label: 'A magical search that reads my mind.' },
-                        { id: 'previews', label: 'Let me hear a tiny bit before I buy the cow.' },
-                        { id: 'secure', label: 'Super-duper secure IP transactions with lasers.' },
-                        { id: 'collaboration', label: 'A psychic link to collaborate with others.' }
+                        { id: 'search', label: 'Advanced search and filtering for compositions.' },
+                        { id: 'previews', label: 'Ability to listen to high-quality audio previews.' },
+                        { id: 'secure', label: 'Secure and transparent IP rights transactions.' },
+                        { id: 'collaboration', label: 'Tools for collaboration between artists and composers.' }
                       ].map((item) => (
                         <FormField
                           key={item.id}
@@ -251,7 +250,6 @@ export default function SurveyPage() {
                               <FormItem key={item.id} className="flex flex-row items-start space-x-3 space-y-0">
                                 <FormControl>
                                    <Checkbox
-                                    className="transform scale-125"
                                     checked={field.value?.includes(item.id)}
                                     onCheckedChange={(checked) => {
                                       return checked
@@ -264,7 +262,7 @@ export default function SurveyPage() {
                                     }}
                                   />
                                 </FormControl>
-                                <FormLabel className="font-normal text-base">{item.label}</FormLabel>
+                                <FormLabel className="font-normal">{item.label}</FormLabel>
                               </FormItem>
                             )
                           }}
@@ -280,10 +278,10 @@ export default function SurveyPage() {
                 name="comments"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="font-semibold text-lg">Scream your secret thoughts into this box:</FormLabel>
+                    <FormLabel className="font-semibold">Any additional thoughts or comments?</FormLabel>
                     <FormControl>
                       <Textarea
-                        placeholder="Tell us your deepest, darkest musical desires..."
+                        placeholder="Tell us what you think..."
                         className="resize-none"
                         {...field}
                       />
@@ -294,16 +292,15 @@ export default function SurveyPage() {
               />
             </CardContent>
             <CardFooter>
-              <Button type="submit" disabled={isLoading} className="w-full text-xl py-6 hover:scale-110 transition-transform duration-300">
+              <Button type="submit" disabled={isLoading} size="lg" className="w-full">
                 {isLoading ? (
                   <>
-                    <Loader2 className="mr-2 h-6 w-6 animate-spin" />
-                    Transmitting Brainwaves...
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Submitting...
                   </>
                 ) : (
                   <>
-                    <Send className="mr-2 h-6 w-6" />
-                    Launch My Thoughts Into The Void!
+                    Submit Feedback
                   </>
                 )}
               </Button>

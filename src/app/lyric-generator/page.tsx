@@ -56,7 +56,7 @@ export default function LyricGeneratorPage() {
               <MicVocal className="h-6 w-6 text-primary" />
             </div>
             <div>
-              <CardTitle className="font-headline text-2xl">Lyric Snippet Generator</CardTitle>
+              <CardTitle className="text-2xl">Lyric Snippet Generator</CardTitle>
               <CardDescription>Get a spark of inspiration for your next song.</CardDescription>
             </div>
           </div>
@@ -123,7 +123,7 @@ export default function LyricGeneratorPage() {
       
       <Card className="flex flex-col">
         <CardHeader>
-          <CardTitle className="font-headline text-2xl">Generated Lyrics</CardTitle>
+          <CardTitle className="text-2xl">Generated Lyrics</CardTitle>
           <CardDescription>Your AI-generated lyric snippet will appear here.</CardDescription>
         </CardHeader>
         <CardContent className="flex-grow">

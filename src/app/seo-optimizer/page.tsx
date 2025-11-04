@@ -60,7 +60,7 @@ export default function SeoOptimizerPage() {
                 <SearchCheck className="h-6 w-6 text-primary" />
             </div>
             <div>
-              <CardTitle className="font-headline text-2xl">SEO Optimizer</CardTitle>
+              <CardTitle className="text-2xl">SEO Optimizer</CardTitle>
               <CardDescription>Generate keywords to make your song more discoverable.</CardDescription>
             </div>
           </div>
@@ -140,7 +140,7 @@ export default function SeoOptimizerPage() {
       
       <Card className="flex flex-col">
         <CardHeader>
-          <CardTitle className="font-headline text-2xl">Generated Keywords</CardTitle>
+          <CardTitle className="text-2xl">Generated Keywords</CardTitle>
           <CardDescription>Your AI-generated keywords will appear here.</CardDescription>
         </CardHeader>
         <CardContent className="flex-grow">

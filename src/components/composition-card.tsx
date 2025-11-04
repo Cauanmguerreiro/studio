@@ -18,7 +18,7 @@ export function CompositionCard({ composition, className }: CompositionCardProps
 
   return (
     <Link href={`/composition/${composition.slug}`}>
-      <Card className={cn("overflow-hidden transition-all hover:shadow-lg hover:-translate-y-1", className)}>
+      <Card className={cn("overflow-hidden transition-shadow hover:shadow-md", className)}>
         <CardHeader className="p-0">
           {image && (
             <div className="aspect-[3/2] w-full relative">
@@ -33,8 +33,8 @@ export function CompositionCard({ composition, className }: CompositionCardProps
             </div>
           )}
         </CardHeader>
-        <CardContent className="p-4 space-y-2">
-            <h3 className="font-headline font-semibold text-lg leading-tight truncate">{composition.title}</h3>
+        <CardContent className="p-4 space-y-1">
+            <h3 className="font-semibold text-lg leading-tight truncate">{composition.title}</h3>
             <p className="text-sm text-muted-foreground">by {composition.artist}</p>
         </CardContent>
         <CardFooter className="p-4 pt-0">

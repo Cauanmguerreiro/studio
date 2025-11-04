@@ -3,10 +3,9 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { Button, buttonVariants } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
 import { Compass, Lightbulb, MicVocal, SearchCheck } from 'lucide-react';
 import { Separator } from './ui/separator';
-import { Badge } from './ui/badge';
 
 const navItems = [
   {
@@ -37,7 +36,7 @@ export function SidebarNav({ isMobile = false }) {
           href={item.href}
           className={cn(
             buttonVariants({
-              variant: pathname === item.href ? 'default' : 'ghost',
+              variant: pathname === item.href ? 'secondary' : 'ghost',
               size: 'default',
             }),
             'justify-start'
@@ -48,12 +47,12 @@ export function SidebarNav({ isMobile = false }) {
         </Link>
       ))}
       <Separator className="my-4" />
-      <div className="rounded-lg bg-accent/30 p-4 text-sm">
+      <div className="rounded-lg bg-muted p-4 text-sm">
         <div className='flex items-center gap-2'>
-            <Lightbulb className="h-8 w-8 text-accent-foreground/80" />
-            <h4 className="font-headline font-semibold text-accent-foreground">Pro Tip</h4>
+            <Lightbulb className="h-6 w-6 text-muted-foreground" />
+            <h4 className="font-semibold text-foreground">Pro Tip</h4>
         </div>
-        <p className="mt-2 text-accent-foreground/80">
+        <p className="mt-2 text-muted-foreground">
             Use the AI tools to kickstart your creativity and optimize your song's reach.
         </p>
       </div>

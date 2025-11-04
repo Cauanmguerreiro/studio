@@ -49,7 +49,7 @@ export default function CompositionPage({ params }: CompositionPageProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
         <div>
             {image && (
-                <div className="aspect-square w-full relative overflow-hidden rounded-xl shadow-lg">
+                <div className="aspect-square w-full relative overflow-hidden rounded-lg border">
                 <Image
                     src={image.imageUrl}
                     alt={image.description}
@@ -67,7 +67,7 @@ export default function CompositionPage({ params }: CompositionPageProps) {
               <Icon className="h-4 w-4" />
               <span>{composition.genre}</span>
             </Badge>
-            <h1 className="mt-2 font-headline text-4xl font-bold tracking-tighter">
+            <h1 className="mt-2 text-4xl font-bold tracking-tighter">
               {composition.title}
             </h1>
             <p className="text-xl text-muted-foreground">by {composition.artist}</p>
@@ -91,7 +91,7 @@ export default function CompositionPage({ params }: CompositionPageProps) {
           
           <Dialog>
             <DialogTrigger asChild>
-                <Button size="lg" className="w-full font-bold text-lg">Purchase IP Rights</Button>
+                <Button size="lg" className="w-full font-semibold text-lg">Purchase IP Rights</Button>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
@@ -119,8 +119,8 @@ export default function CompositionPage({ params }: CompositionPageProps) {
       <Separator className="my-12" />
 
       <div>
-        <h2 className="font-headline text-3xl font-bold">Lyrics</h2>
-        <div className="mt-6 whitespace-pre-wrap rounded-lg bg-muted p-6 font-serif text-lg leading-relaxed">
+        <h2 className="text-3xl font-bold">Lyrics</h2>
+        <div className="mt-6 whitespace-pre-wrap rounded-lg bg-muted p-6 font-mono text-base leading-relaxed">
             {composition.lyrics}
         </div>
       </div>
