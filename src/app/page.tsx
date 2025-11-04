@@ -50,9 +50,59 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+
+      {/* Features Section */}
+      <section className="py-16 md:py-24 bg-background">
+        <div className="container px-4">
+          <div className="text-center">
+            <h2 className="text-3xl md:text-4xl font-bold">Uma Revolução na Indústria Musical</h2>
+            <p className="mt-2 text-lg text-muted-foreground max-w-2xl mx-auto">
+              O Songnation nasceu para quebrar barreiras, valorizar o compositor e dar ao artista a ferramenta que faltava para encontrar o próximo hit.
+            </p>
+          </div>
+          <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <Card className="text-center">
+              <CardContent className="p-6">
+                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 mb-4">
+                  <Search className="h-8 w-8 text-primary" />
+                </div>
+                <h3 className="text-xl font-semibold">Descoberta Inteligente</h3>
+                <p className="mt-2 text-muted-foreground">Filtre por gênero, humor ou tema e encontre a composição perfeita em minutos, não em meses.</p>
+              </CardContent>
+            </Card>
+            <Card className="text-center">
+              <CardContent className="p-6">
+                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 mb-4">
+                  <ShieldCheck className="h-8 w-8 text-primary" />
+                </div>
+                <h3 className="text-xl font-semibold">Segurança Jurídica</h3>
+                <p className="mt-2 text-muted-foreground">Transações transparentes com contratos automatizados que protegem compositores e artistas.</p>
+              </CardContent>
+            </Card>
+            <Card className="text-center">
+              <CardContent className="p-6">
+                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 mb-4">
+                  <Wand2 className="h-8 w-8 text-primary" />
+                </div>
+                <h3 className="text-xl font-semibold">Valorização do Criador</h3>
+                <p className="mt-2 text-muted-foreground">Damos ao compositor a vitrine e a monetização que ele merece, transformando arte em receita.</p>
+              </CardContent>
+            </Card>
+            <Card className="text-center">
+              <CardContent className="p-6">
+                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 mb-4">
+                  <Users className="h-8 w-8 text-primary" />
+                </div>
+                <h3 className="text-xl font-semibold">Conexão Direta</h3>
+                <p className="mt-2 text-muted-foreground">Uma ponte direta entre o gênio criativo e a voz que vai levar a música ao topo das paradas.</p>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
       
       {/* Genres Section */}
-      <section className="py-16 md:py-24 bg-background">
+      <section className="pb-16 md:pb-24 bg-background">
         <div className="container px-4 text-center">
           <h2 className="text-3xl md:text-4xl font-bold">Explore por Gênero</h2>
            <p className="mt-2 text-lg text-muted-foreground max-w-xl mx-auto">
@@ -145,15 +195,23 @@ export default function LandingPage() {
 
       {/* Footer */}
       <footer className="bg-muted py-8">
-        <div className="container px-4 flex flex-col sm:flex-row justify-between items-center text-sm text-muted-foreground">
-            <p>&copy; {new Date().getFullYear()} SONGNATION. Todos os direitos reservados.</p>
-            <div className="flex gap-4 mt-4 sm:mt-0">
-                <Link href="/terms" passHref>
-                  <Button variant="link" className="text-muted-foreground">Termos de Serviço</Button>
-                </Link>
-                <Link href="/privacy" passHref>
-                  <Button variant="link" className="text-muted-foreground">Política de Privacidade</Button>
-                </Link>
+        <div className="container px-4 text-sm text-muted-foreground">
+            <div className="flex flex-col sm:flex-row justify-between items-center">
+                <p>&copy; {new Date().getFullYear()} SONGNATION. Todos os direitos reservados.</p>
+                <div className="flex gap-4 mt-4 sm:mt-0">
+                    <Link href="/terms" passHref>
+                    <Button variant="link" className="text-muted-foreground">Termos de Serviço</Button>
+                    </Link>
+                    <Link href="/privacy" passHref>
+                    <Button variant="link" className="text-muted-foreground">Política de Privacidade</Button>
+                    </Link>
+                </div>
+            </div>
+            <div className="mt-8 pt-8 border-t text-center">
+                <h4 className="font-semibold text-foreground">Desenvolvido por</h4>
+                <p className="mt-2">
+                    Cauan Guerreiro &bull; Gustavo Camargo &bull; Bruno Barbosa &bull; Guilherme Serrano &bull; Nicolas Dimer
+                </p>
             </div>
         </div>
       </footer>
