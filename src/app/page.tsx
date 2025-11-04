@@ -14,6 +14,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from '@/components/ui/input';
+import { Separator } from '@/components/ui/separator';
 
 const sellerSchema = z.object({
   processoAtual: z.string().min(10, 'Por favor, detalhe um pouco mais.'),
@@ -52,6 +53,10 @@ const formSchema = z.object({
   userType: z.enum(['seller', 'buyer']),
   seller: sellerSchema.optional(),
   buyer: buyerSchema.optional(),
+  nome: z.string().optional(),
+  nomeArtistico: z.string().optional(),
+  contato: z.string().optional(),
+  redesSociais: z.string().optional(),
 }).refine(data => {
     if (data.userType === 'seller') return !!data.seller;
     if (data.userType === 'buyer') return !!data.buyer;
@@ -94,7 +99,11 @@ export default function SurveyPage() {
         solucao: '',
         pagamento: [],
         feedback: '',
-      }
+      },
+      nome: '',
+      nomeArtistico: '',
+      contato: '',
+      redesSociais: '',
     },
   });
 
@@ -194,7 +203,7 @@ export default function SurveyPage() {
                                     <Checkbox
                                       checked={field.value?.includes(item)}
                                       onCheckedChange={(checked) => checked
-                                          ? field.onChange([...field.value, item])
+                                          ? field.onChange([...(field.value || []), item])
                                           : field.onChange(field.value?.filter((v) => v !== item))}
                                     />
                                   </FormControl>
@@ -224,7 +233,7 @@ export default function SurveyPage() {
                                     <Checkbox
                                       checked={field.value?.includes(item)}
                                       onCheckedChange={(checked) => checked
-                                          ? field.onChange([...field.value, item])
+                                          ? field.onChange([...(field.value || []), item])
                                           : field.onChange(field.value?.filter((v) => v !== item))}
                                     />
                                   </FormControl>
@@ -377,7 +386,7 @@ export default function SurveyPage() {
                                     <Checkbox
                                       checked={field.value?.includes(item)}
                                       onCheckedChange={(checked) => checked
-                                          ? field.onChange([...field.value, item])
+                                          ? field.onChange([...(field.value || []), item])
                                           : field.onChange(field.value?.filter((v) => v !== item))}
                                     />
                                   </FormControl>
@@ -464,7 +473,7 @@ export default function SurveyPage() {
                                     <Checkbox
                                       checked={field.value?.includes(item)}
                                       onCheckedChange={(checked) => checked
-                                          ? field.onChange([...field.value, item])
+                                          ? field.onChange([...(field.value || []), item])
                                           : field.onChange(field.value?.filter((v) => v !== item))}
                                     />
                                   </FormControl>
@@ -498,6 +507,70 @@ export default function SurveyPage() {
                 </Card>
               </TabsContent>
             </Tabs>
+            
+            <Card className="mt-8">
+              <CardHeader>
+                <CardTitle>Informações de Contato (Opcional)</CardTitle>
+                <CardDescription>Caso queira participar de futuras entrevistas ou testes, deixe seu contato.</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <FormField
+                    control={form.control}
+                    name="nome"
+                    render={({ field }) => (
+                        <FormItem>
+                        <FormLabel>Nome</FormLabel>
+                        <FormControl>
+                            <Input placeholder="Seu nome completo" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                        </FormItem>
+                    )}
+                    />
+                    <FormField
+                    control={form.control}
+                    name="nomeArtistico"
+                    render={({ field }) => (
+                        <FormItem>
+                        <FormLabel>Nome Artístico/Profissional</FormLabel>
+                        <FormControl>
+                            <Input placeholder="Seu nome na indústria" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                        </FormItem>
+                    )}
+                    />
+                </div>
+                <FormField
+                  control={form.control}
+                  name="contato"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Contato (E-mail ou WhatsApp)</FormLabel>
+                      <FormControl>
+                        <Input placeholder="seu.email@exemplo.com ou (99) 99999-9999" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="redesSociais"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Redes Sociais</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Link para seu Instagram, TikTok, etc." {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </CardContent>
+            </Card>
+
             <CardFooter className="mt-6">
               <Button type="submit" disabled={isLoading} size="lg" className="w-full font-bold text-lg tracking-wider">
                 {isLoading ? (
@@ -517,3 +590,5 @@ export default function SurveyPage() {
     </div>
   );
 }
+
+    
