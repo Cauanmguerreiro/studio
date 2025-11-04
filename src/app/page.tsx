@@ -153,9 +153,7 @@ export default function LandingPage() {
                     src="https://docs.google.com/forms/d/e/1FAIpQLSco65pXa-BYEXNvrMA-J94SH1cOC3IB6izsenEWRCFIiEJr4g/viewform?embedded=true" 
                     width="100%" 
                     height="100%" 
-                    frameBorder="0" 
-                    marginHeight={0} 
-                    marginWidth={0}>
+                    >
                       Carregando…
                   </iframe>
                 </div>
@@ -180,9 +178,7 @@ export default function LandingPage() {
                     src="https://docs.google.com/forms/d/e/1FAIpQLSepQ1CHZ8uroa8PsO7xnshRLNvMKEtcWWYSZv-NspqzCSi8uQ/viewform?embedded=true" 
                     width="100%" 
                     height="100%" 
-                    frameBorder="0" 
-                    marginHeight={0} 
-                    marginWidth={0}>
+                    >
                       Carregando…
                   </iframe>
                 </div>
