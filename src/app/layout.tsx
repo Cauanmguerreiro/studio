@@ -29,6 +29,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR" suppressHydrationWarning>
+      <head />
       <body className={cn("min-h-screen bg-background font-sans antialiased", inter.variable, hammersmithOne.variable)}>
           <div className="relative flex min-h-dvh flex-col">
             <SiteHeader />
