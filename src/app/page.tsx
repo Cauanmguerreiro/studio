@@ -92,7 +92,7 @@ export default function SurveyPage() {
         </p>
       </div>
 
-      <Card>
+      <Card className="border-none">
         <CardHeader>
           <CardTitle>Market Research Survey</CardTitle>
           <CardDescription>Your answers will help shape the future of our platform.</CardDescription>
@@ -105,19 +105,19 @@ export default function SurveyPage() {
                 name="role"
                 render={({ field }) => (
                   <FormItem className="space-y-3">
-                    <FormLabel className="font-semibold">What is your primary role in the music industry?</FormLabel>
+                    <FormLabel className="font-semibold text-base">What is your primary role in the music industry?</FormLabel>
                     <FormControl>
                       <RadioGroup
                         onValueChange={field.onChange}
                         defaultValue={field.value}
-                        className="flex flex-col space-y-1"
+                        className="flex flex-col space-y-2"
                       >
                         {roles.map((role) => (
                            <FormItem key={role.id} className="flex items-center space-x-3 space-y-0">
                              <FormControl>
                                <RadioGroupItem value={role.id} />
                              </FormControl>
-                             <FormLabel className="font-normal">{role.label}</FormLabel>
+                             <FormLabel className="font-normal text-base">{role.label}</FormLabel>
                            </FormItem>
                         ))}
                       </RadioGroup>
@@ -132,20 +132,20 @@ export default function SurveyPage() {
                 name="findComposition"
                 render={({ field }) => (
                   <FormItem className="space-y-3">
-                    <FormLabel className="font-semibold">How often do you look for new compositions to record or perform?</FormLabel>
+                    <FormLabel className="font-semibold text-base">How often do you look for new compositions to record or perform?</FormLabel>
                     <FormControl>
-                      <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex flex-col space-y-1">
+                      <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex flex-col space-y-2">
                         <FormItem className="flex items-center space-x-3 space-y-0">
                           <FormControl><RadioGroupItem value="frequently" /></FormControl>
-                          <FormLabel className="font-normal">Frequently</FormLabel>
+                          <FormLabel className="font-normal text-base">Frequently</FormLabel>
                         </FormItem>
                         <FormItem className="flex items-center space-x-3 space-y-0">
                           <FormControl><RadioGroupItem value="sometimes" /></FormControl>
-                          <FormLabel className="font-normal">Sometimes</FormLabel>
+                          <FormLabel className="font-normal text-base">Sometimes</FormLabel>
                         </FormItem>
                          <FormItem className="flex items-center space-x-3 space-y-0">
                           <FormControl><RadioGroupItem value="rarely" /></FormControl>
-                          <FormLabel className="font-normal">Rarely or never</FormLabel>
+                          <FormLabel className="font-normal text-base">Rarely or never</FormLabel>
                         </FormItem>
                       </RadioGroup>
                     </FormControl>
@@ -159,20 +159,20 @@ export default function SurveyPage() {
                 name="sellComposition"
                 render={({ field }) => (
                   <FormItem className="space-y-3">
-                    <FormLabel className="font-semibold">Have you ever considered selling the rights to your original compositions?</FormLabel>
+                    <FormLabel className="font-semibold text-base">Have you ever considered selling the rights to your original compositions?</FormLabel>
                     <FormControl>
-                      <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex flex-col space-y-1">
+                      <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex flex-col space-y-2">
                         <FormItem className="flex items-center space-x-3 space-y-0">
                           <FormControl><RadioGroupItem value="yes-actively" /></FormControl>
-                          <FormLabel className="font-normal">Yes, I am actively looking for ways to do so.</FormLabel>
+                          <FormLabel className="font-normal text-base">Yes, I am actively looking for ways to do so.</FormLabel>
                         </FormItem>
                         <FormItem className="flex items-center space-x-3 space-y-0">
                           <FormControl><RadioGroupItem value="yes-interested" /></FormControl>
-                          <FormLabel className="font-normal">I would be interested if there was a simple way.</FormLabel>
+                          <FormLabel className="font-normal text-base">I would be interested if there was a simple way.</FormLabel>
                         </FormItem>
                          <FormItem className="flex items-center space-x-3 space-y-0">
                           <FormControl><RadioGroupItem value="no" /></FormControl>
-                          <FormLabel className="font-normal">No, I am not interested.</FormLabel>
+                          <FormLabel className="font-normal text-base">No, I am not interested.</FormLabel>
                         </FormItem>
                       </RadioGroup>
                     </FormControl>
@@ -187,7 +187,7 @@ export default function SurveyPage() {
                 render={() => (
                   <FormItem>
                      <div className="mb-4">
-                      <FormLabel className="font-semibold">What are the biggest challenges you face in the music industry? (Select all that apply)</FormLabel>
+                      <FormLabel className="font-semibold text-base">What are the biggest challenges you face in the music industry? (Select all that apply)</FormLabel>
                      </div>
                       {[
                         { id: 'networking', label: 'Networking and connecting with other professionals.' },
@@ -201,7 +201,7 @@ export default function SurveyPage() {
                           name="challenges"
                           render={({ field }) => {
                             return (
-                              <FormItem key={item.id} className="flex flex-row items-start space-x-3 space-y-0">
+                              <FormItem key={item.id} className="flex flex-row items-start space-x-3 space-y-0 mb-2">
                                 <FormControl>
                                   <Checkbox
                                     checked={field.value?.includes(item.id)}
@@ -216,7 +216,7 @@ export default function SurveyPage() {
                                     }}
                                   />
                                 </FormControl>
-                                <FormLabel className="font-normal">{item.label}</FormLabel>
+                                <FormLabel className="font-normal text-base">{item.label}</FormLabel>
                               </FormItem>
                             )
                           }}
@@ -233,7 +233,7 @@ export default function SurveyPage() {
                 render={() => (
                   <FormItem>
                     <div className="mb-4">
-                     <FormLabel className="font-semibold">Which features would be most valuable in a music IP marketplace? (Select all that apply)</FormLabel>
+                     <FormLabel className="font-semibold text-base">Which features would be most valuable in a music IP marketplace? (Select all that apply)</FormLabel>
                     </div>
                      {[
                         { id: 'search', label: 'Advanced search and filtering for compositions.' },
@@ -247,7 +247,7 @@ export default function SurveyPage() {
                           name="features"
                           render={({ field }) => {
                             return (
-                              <FormItem key={item.id} className="flex flex-row items-start space-x-3 space-y-0">
+                              <FormItem key={item.id} className="flex flex-row items-start space-x-3 space-y-0 mb-2">
                                 <FormControl>
                                    <Checkbox
                                     checked={field.value?.includes(item.id)}
@@ -262,7 +262,7 @@ export default function SurveyPage() {
                                     }}
                                   />
                                 </FormControl>
-                                <FormLabel className="font-normal">{item.label}</FormLabel>
+                                <FormLabel className="font-normal text-base">{item.label}</FormLabel>
                               </FormItem>
                             )
                           }}
@@ -278,7 +278,7 @@ export default function SurveyPage() {
                 name="comments"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="font-semibold">Any additional thoughts or comments?</FormLabel>
+                    <FormLabel className="font-semibold text-base">Any additional thoughts or comments?</FormLabel>
                     <FormControl>
                       <Textarea
                         placeholder="Tell us what you think..."
@@ -292,7 +292,7 @@ export default function SurveyPage() {
               />
             </CardContent>
             <CardFooter>
-              <Button type="submit" disabled={isLoading} size="lg" className="w-full">
+              <Button type="submit" disabled={isLoading} size="lg" className="w-full font-bold text-lg tracking-wider">
                 {isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
