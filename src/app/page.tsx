@@ -5,8 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { ArrowRight, Search, ShieldCheck, Users, Wand2 } from 'lucide-react';
-import { compositions, genres } from '@/lib/data';
-import { CompositionCard } from '@/components/composition-card';
+import { genres } from '@/lib/data';
 import { placeholderImages } from '@/lib/placeholder-images.json';
 import { GenreIcons } from '@/components/icons';
 import {
@@ -47,26 +46,6 @@ export default function LandingPage() {
               Participe da Pesquisa <ArrowRight className="ml-2" />
             </Button>
             <p className="mt-2 text-sm text-white/60">Sua opinião é fundamental para construirmos o futuro da música.</p>
-          </div>
-        </div>
-      </section>
-
-      {/* Featured Compositions Section */}
-      <section className="py-16 md:py-24 bg-background">
-        <div className="container px-4">
-          <h2 className="text-3xl md:text-4xl font-bold text-center">Músicas em Destaque</h2>
-          <p className="mt-2 text-lg text-muted-foreground text-center max-w-xl mx-auto">
-            Explore uma seleção de nossas composições mais recentes e populares.
-          </p>
-          <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {compositions.slice(0, 4).map((comp) => (
-              <CompositionCard key={comp.id} composition={comp} />
-            ))}
-          </div>
-          <div className="text-center mt-12">
-            <Button variant="outline" size="lg">
-              Explorar Todo o Catálogo <ArrowRight className="ml-2" />
-            </Button>
           </div>
         </div>
       </section>
