@@ -16,7 +16,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { useFirestore } from '@/firebase';
-import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { addDoc, collection, serverTimestamp, type Firestore } from 'firebase/firestore';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
 
@@ -73,6 +73,27 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
+async function saveSurveyResponse(firestore: Firestore, values: FormValues) {
+    const surveyData = {
+        ...values,
+        createdAt: serverTimestamp(),
+    };
+    
+    const surveyCollection = collection(firestore, 'surveyResponses');
+    
+    return addDoc(surveyCollection, surveyData)
+      .catch((serverError) => {
+        const permissionError = new FirestorePermissionError({
+          path: surveyCollection.path,
+          operation: 'create',
+          requestResourceData: surveyData
+        }, serverError);
+        errorEmitter.emit('permission-error', permissionError);
+        // Re-throw to be caught by the calling function
+        throw permissionError;
+      });
+}
+
 export default function SurveyPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -116,43 +137,35 @@ export default function SurveyPage() {
   const userType = form.watch('userType');
 
   async function onSubmit(values: FormValues) {
+    if (!firestore) {
+        toast({
+            variant: "destructive",
+            title: "Uh oh! Algo deu errado.",
+            description: "A conexão com o banco de dados não foi estabelecida. Tente recarregar a página.",
+        });
+        return;
+    }
+
     setIsLoading(true);
     
-    const surveyData = {
-      ...values,
-      createdAt: serverTimestamp(),
-    };
-    
-    const surveyCollection = collection(firestore, 'surveyResponses');
-    
-    addDoc(surveyCollection, surveyData)
-      .then(() => {
+    try {
+        await saveSurveyResponse(firestore, values);
         toast({
           title: "Questionário enviado!",
           description: "Muito obrigado pelo seu feedback valioso.",
         });
         setIsSubmitted(true);
         form.reset();
-      })
-      .catch((error) => {
+    } catch (error) {
         console.error("Error writing document: ", error);
-        
-        const permissionError = new FirestorePermissionError({
-          path: surveyCollection.path,
-          operation: 'create',
-          requestResourceData: surveyData
-        });
-        errorEmitter.emit('permission-error', permissionError);
-
         toast({
           variant: "destructive",
           title: "Uh oh! Algo deu errado.",
           description: "Não foi possível enviar seu feedback. Tente novamente.",
         });
-      })
-      .finally(() => {
+    } finally {
         setIsLoading(false);
-      });
+    }
   }
 
   if (isSubmitted) {
