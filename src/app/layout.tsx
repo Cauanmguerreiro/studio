@@ -15,8 +15,11 @@ const hammersmithOne = Hammersmith_One({
 });
 
 export const metadata: Metadata = {
-  title: "SONGNATION - O Ecossistema da Música",
+  title: "Songnation",
   description: "Descubra, licencie e colabore em composições musicais. O futuro da propriedade intelectual na música começa aqui.",
+  icons: {
+    icon: '/logo.png',
+  },
 };
 
 export default function RootLayout({
