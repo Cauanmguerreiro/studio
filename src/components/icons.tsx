@@ -42,7 +42,7 @@ export const Logo = (props: SVGProps<SVGSVGElement>) => (
       fill="url(#paint1_linear_1_2)"
     />
   </svg>
-));
+);
 
 const CowboyHat = (props: SVGProps<SVGSVGElement>) => (
   <svg
