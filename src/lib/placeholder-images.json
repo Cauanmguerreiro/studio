@@ -1,3 +1,82 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "hero",
+      "description": "A vibrant stage with musical instruments and dramatic lighting, evoking a sense of creativity and performance.",
+      "imageUrl": "https://images.unsplash.com/photo-1525018923-1ebe8261a6a6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxtdXNpYyUyMHN0YWdlfGVufDB8fHx8MTc2MjI0Njc3M3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "music stage"
+    },
+    {
+      "id": "sertanejo-1",
+      "description": "Acoustic guitar resting on a rustic wooden porch.",
+      "imageUrl": "https://images.unsplash.com/photo-1630110330918-ced8a801add8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxhY291c3RpYyUyMGd1aXRhcnxlbnwwfHx8fDE3NjIyNDQ5MzN8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "acoustic guitar"
+    },
+    {
+      "id": "gospel-1",
+      "description": "Sunlight streaming through a church window.",
+      "imageUrl": "https://images.unsplash.com/photo-1555679432-b7b7a5e3680c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxjaHVyY2glMjB3aW5kb3d8ZW58MHx8fHwxNzYyMjA3NjM3fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "church window"
+    },
+    {
+      "id": "trap-1",
+      "description": "Neon lights reflecting on a wet city street at night.",
+      "imageUrl": "https://images.unsplash.com/photo-1550275994-cdc89cd1948f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxuZW9uJTIwbGlnaHRzfGVufDB8fHx8MTc2MjIzNTE3OXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "neon lights"
+    },
+    {
+      "id": "piseiro-1",
+      "description": "Dusty cowboy boots on a dance floor.",
+      "imageUrl": "https://images.unsplash.com/photo-1610685756406-0f2fdc231bf0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxjb3dib3klMjBib290c3xlbnwwfHx8fDE3NjIyNjgwNTV8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "cowboy boots"
+    },
+    {
+      "id": "arrocha-1",
+      "description": "A couple dancing closely under dim lights.",
+      "imageUrl": "https://images.unsplash.com/photo-1616139622529-4540e1810590?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8Y291cGxlJTIwZGFuY2luZ3xlbnwwfHx8fDE3NjIxODY0MTF8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "couple dancing"
+    },
+    {
+      "id": "funk-1",
+      "description": "A large sound system speaker with deep bass vibrations.",
+      "imageUrl": "https://images.unsplash.com/photo-1699567364063-6e3a3768b564?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxzb3VuZCUyMHNwZWFrZXJ8ZW58MHx8fHwxNzYyMjY4MDU1fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "sound speaker"
+    },
+    {
+      "id": "sertanejo-2",
+      "description": "A wide-brimmed hat on a fence post at sunset.",
+      "imageUrl": "https://images.unsplash.com/photo-1649640270630-792144eaa5d1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxjb3dib3klMjBoYXR8ZW58MHx8fHwxNzYyMjY4MDU1fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "cowboy hat"
+    },
+    {
+      "id": "gospel-2",
+      "description": "An open bible on a wooden pulpit.",
+      "imageUrl": "https://images.unsplash.com/photo-1533000971552-6a962ff0b9f9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxvcGVuJTIwYmlibGV8ZW58MHx8fHwxNzYyMjI1MjU1fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "open bible"
+    },
+    {
+      "id": "trap-2",
+      "description": "A close-up of a modern audio mixing console.",
+      "imageUrl": "https://images.unsplash.com/photo-1651838644528-cdc671c31395?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxhdWRpbyUyMG1peGVyfGVufDB8fHx8MTc2MjIyMzA4NXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "audio mixer"
+    },
+    {
+      "id": "piseiro-2",
+      "description": "A rural Brazilian landscape with a dirt road.",
+      "imageUrl": "https://images.unsplash.com/photo-1609185034404-a7a6354df54d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxkaXJ0JTIwcm9hZHxlbnwwfHx8fDE3NjIyNjgwNTV8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "dirt road"
+    },
+    {
+      "id": "arrocha-2",
+      "description": "Raindrops on a window pane with a blurred city background.",
+      "imageUrl": "https://images.unsplash.com/photo-1631816591249-ba33dde81a23?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxyYWlueSUyMHdpbmRvd3xlbnwwfHx8fDE3NjIxODg4NDN8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "rainy window"
+    },
+    {
+      "id": "funk-2",
+      "description": "A vibrant graffiti wall in a Brazilian favela.",
+      "imageUrl": "https://images.unsplash.com/photo-1547417584-12db672469b6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxncmFmZml0aSUyMHdhbGx8ZW58MHx8fHwxNzYyMTk2NjY5fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "graffiti wall"
+    }
+  ]
 }
