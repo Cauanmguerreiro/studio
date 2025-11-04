@@ -5,6 +5,7 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { SiteHeader } from "@/components/site-header";
 import { Hammersmith_One } from "next/font/google";
+import { FirebaseClientProvider } from "@/firebase";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -27,13 +28,15 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" suppressHydrationWarning>
       <body className={cn("min-h-screen bg-background font-sans antialiased", inter.variable, hammersmithOne.variable)}>
-        <div className="relative flex min-h-dvh flex-col">
-          <SiteHeader />
-          <main className="container mx-auto flex-1 px-4 py-8 sm:px-6 lg:px-8">
-            {children}
-          </main>
-        </div>
-        <Toaster />
+        <FirebaseClientProvider>
+          <div className="relative flex min-h-dvh flex-col">
+            <SiteHeader />
+            <main className="container mx-auto flex-1 px-4 py-8 sm:px-6 lg:px-8">
+              {children}
+            </main>
+          </div>
+          <Toaster />
+        </FirebaseClientProvider>
       </body>
     </html>
   );

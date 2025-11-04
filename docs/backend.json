@@ -1,0 +1,66 @@
+{
+  "entities": {
+    "surveyResponse": {
+      "title": "Survey Response",
+      "description": "Represents a single submission of the market research survey.",
+      "type": "object",
+      "properties": {
+        "userType": {
+          "type": "string",
+          "enum": ["seller", "buyer"]
+        },
+        "sellerData": {
+          "type": "object",
+          "properties": {
+            "processoAtual": { "type": "string" },
+            "frustracao": { "type": "string" },
+            "ferramentas": { "type": "array", "items": { "type": "string" } },
+            "licenciamento": { "type": "array", "items": { "type": "string" } },
+            "precoExclusiva": { "type": "string" },
+            "descoberta": { "type": "string" },
+            "colaboracao": { "type": "string" },
+            "solucao": { "type": "string" },
+            "monetizacao": { "type": "string" },
+            "focoLocal": { "type": "string" }
+          }
+        },
+        "buyerData": {
+          "type": "object",
+          "properties": {
+            "processoAtual": { "type": "string" },
+            "frustracao": { "type": "string" },
+            "descoberta": { "type": "array", "items": { "type": "string" } },
+            "confianca": { "type": "string" },
+            "medoCompra": { "type": "string" },
+            "preco": { "type": "string" },
+            "solucao": { "type": "string" },
+            "pagamento": { "type": "array", "items": { "type": "string" } },
+            "feedback": { "type": "string" }
+          }
+        },
+        "contactInfo": {
+          "type": "object",
+          "properties": {
+            "nome": { "type": "string" },
+            "nomeArtistico": { "type": "string" },
+            "contato": { "type": "string" },
+            "redesSociais": { "type": "string" }
+          }
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    }
+  },
+  "auth": {
+    "providers": ["anonymous"]
+  },
+  "firestore": {
+    "/surveyResponses/{responseId}": {
+      "schema": { "$ref": "#/entities/surveyResponse" },
+      "description": "Stores all responses from the market research survey."
+    }
+  }
+}

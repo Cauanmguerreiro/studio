@@ -15,6 +15,11 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
+import { useFirestore } from '@/firebase';
+import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { errorEmitter } from '@/firebase/error-emitter';
+import { FirestorePermissionError } from '@/firebase/errors';
+
 
 const sellerSchema = z.object({
   processoAtual: z.string().min(10, 'Por favor, detalhe um pouco mais.'),
@@ -72,6 +77,7 @@ export default function SurveyPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const { toast } = useToast();
+  const firestore = useFirestore();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -111,18 +117,42 @@ export default function SurveyPage() {
 
   async function onSubmit(values: FormValues) {
     setIsLoading(true);
-    console.log('Dados da Pesquisa:', values);
     
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    const surveyData = {
+      ...values,
+      createdAt: serverTimestamp(),
+    };
     
-    toast({
-      title: "Questionário enviado!",
-      description: "Muito obrigado pelo seu feedback valioso.",
-    });
+    const surveyCollection = collection(firestore, 'surveyResponses');
+    
+    addDoc(surveyCollection, surveyData)
+      .then(() => {
+        toast({
+          title: "Questionário enviado!",
+          description: "Muito obrigado pelo seu feedback valioso.",
+        });
+        setIsSubmitted(true);
+        form.reset();
+      })
+      .catch((error) => {
+        console.error("Error writing document: ", error);
+        
+        const permissionError = new FirestorePermissionError({
+          path: surveyCollection.path,
+          operation: 'create',
+          requestResourceData: surveyData
+        });
+        errorEmitter.emit('permission-error', permissionError);
 
-    setIsLoading(false);
-    setIsSubmitted(true);
-    form.reset();
+        toast({
+          variant: "destructive",
+          title: "Uh oh! Algo deu errado.",
+          description: "Não foi possível enviar seu feedback. Tente novamente.",
+        });
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   }
 
   if (isSubmitted) {
@@ -590,5 +620,3 @@ export default function SurveyPage() {
     </div>
   );
 }
-
-    
