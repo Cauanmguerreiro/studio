@@ -98,9 +98,8 @@ export default function LandingPage() {
                   </DialogDescription>
                 </DialogHeader>
                 <div className="flex-1">
-                   {/* SUBSTITUA O 'src' ABAIXO PELA URL DE EMBED DO SEU GOOGLE FORM PARA PRODUTORES */}
                   <iframe 
-                    src="https://docs.google.com/forms/d/e/1FAIpQLSxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx/viewform?embedded=true" 
+                    src="https://docs.google.com/forms/d/e/1FAIpQLSco65pXa-BYEXNvrMA-J94SH1cOC3IB6izsenEWRCFIiEJr4g/viewform?embedded=true" 
                     width="100%" 
                     height="100%" 
                     frameBorder="0" 
@@ -126,9 +125,8 @@ export default function LandingPage() {
                   </DialogDescription>
                 </DialogHeader>
                  <div className="flex-1">
-                   {/* SUBSTITUA O 'src' ABAIXO PELA URL DE EMBED DO SEU GOOGLE FORM PARA ARTISTAS */}
                   <iframe 
-                    src="https://docs.google.com/forms/d/e/1FAIpQLSyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy/viewform?embedded=true" 
+                    src="https://docs.google.com/forms/d/e/1FAIpQLSepQ1CHZ8uroa8PsO7xnshRLNvMKEtcWWYSZv-NspqzCSi8uQ/viewform?embedded=true" 
                     width="100%" 
                     height="100%" 
                     frameBorder="0" 
