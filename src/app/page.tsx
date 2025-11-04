@@ -2,16 +2,21 @@
 
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
-import { ArrowRight, CheckCircle, Search, ShieldCheck, Users, Wand2 } from 'lucide-react';
-import { compositions } from '@/lib/data';
+import { ArrowRight, Search, ShieldCheck, Users, Wand2 } from 'lucide-react';
+import { compositions, genres } from '@/lib/data';
 import { CompositionCard } from '@/components/composition-card';
 import { placeholderImages } from '@/lib/placeholder-images.json';
 import { GenreIcons } from '@/components/icons';
-import { genres } from '@/lib/data';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 export default function LandingPage() {
   const heroImage = placeholderImages.find((img) => img.id === 'hero');
@@ -37,17 +42,12 @@ export default function LandingPage() {
           <p className="mt-4 max-w-2xl mx-auto text-lg md:text-xl text-white/80">
             Descubra, licencie e colabore em composições únicas com segurança e transparência. O futuro da propriedade intelectual na música começa aqui.
           </p>
-          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Input
-              type="email"
-              placeholder="Digite seu melhor e-mail"
-              className="max-w-sm text-lg h-12 text-foreground"
-            />
-            <Button size="lg" className="w-full sm:w-auto font-bold text-lg">
-              Receber Acesso Antecipado <ArrowRight className="ml-2" />
+          <div className="mt-8">
+            <Button size="lg" className="font-bold text-lg" onClick={() => document.getElementById('cta-section')?.scrollIntoView({ behavior: 'smooth' })}>
+              Participe da Pesquisa <ArrowRight className="ml-2" />
             </Button>
+            <p className="mt-2 text-sm text-white/60">Sua opinião é fundamental para construirmos o futuro da música.</p>
           </div>
-          <p className="mt-2 text-sm text-white/60">Junte-se à lista de espera e seja o primeiro a saber.</p>
         </div>
       </section>
 
@@ -142,21 +142,70 @@ export default function LandingPage() {
       </section>
       
       {/* Final CTA Section */}
-      <section className="py-20 md:py-32 bg-primary text-primary-foreground">
+      <section id="cta-section" className="py-20 md:py-32 bg-primary text-primary-foreground">
         <div className="container px-4 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight">Pronto para Revolucionar sua Música?</h2>
-          <p className="mt-4 max-w-xl mx-auto text-lg text-primary-foreground/80">
-            Junte-se à nossa comunidade de criadores e artistas visionários.
+          <h2 className="text-3xl md:text-4xl font-bold tracking-tight">Faça Parte da Construção da SONGNATION</h2>
+          <p className="mt-4 max-w-2xl mx-auto text-lg text-primary-foreground/80">
+            Sua perspectiva como criador ou comprador é essencial. Responda nossa pesquisa e nos ajude a moldar a plataforma ideal para o mercado musical brasileiro.
           </p>
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Input
-              type="email"
-              placeholder="seu.email@exemplo.com"
-              className="max-w-sm text-lg h-12 bg-primary-foreground/10 border-primary-foreground/30 placeholder:text-primary-foreground/50 focus:bg-background focus:text-foreground"
-            />
-            <Button size="lg" variant="secondary" className="w-full sm:w-auto font-bold text-lg">
-                Garantir meu Acesso
-            </Button>
+            
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button size="lg" variant="secondary" className="w-full sm:w-auto font-bold text-lg">
+                  Sou Compositor / Produtor
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-3xl h-[80vh] flex flex-col">
+                <DialogHeader>
+                  <DialogTitle>Pesquisa para Criadores</DialogTitle>
+                  <DialogDescription>
+                    Seu feedback é crucial para nós.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="flex-1">
+                   {/* SUBSTITUA O 'src' ABAIXO PELA URL DE EMBED DO SEU GOOGLE FORM PARA PRODUTORES */}
+                  <iframe 
+                    src="https://docs.google.com/forms/d/e/1FAIpQLSxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx/viewform?embedded=true" 
+                    width="100%" 
+                    height="100%" 
+                    frameBorder="0" 
+                    marginHeight={0} 
+                    marginWidth={0}>
+                      Carregando…
+                  </iframe>
+                </div>
+              </DialogContent>
+            </Dialog>
+
+            <Dialog>
+              <DialogTrigger asChild>
+                 <Button size="lg" variant="outline" className="w-full sm:w-auto font-bold text-lg bg-transparent text-primary-foreground border-primary-foreground hover:bg-primary-foreground hover:text-primary">
+                  Sou Artista / Intérprete
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-3xl h-[80vh] flex flex-col">
+                <DialogHeader>
+                  <DialogTitle>Pesquisa para Compradores</DialogTitle>
+                  <DialogDescription>
+                    Queremos entender suas necessidades.
+                  </DialogDescription>
+                </DialogHeader>
+                 <div className="flex-1">
+                   {/* SUBSTITUA O 'src' ABAIXO PELA URL DE EMBED DO SEU GOOGLE FORM PARA ARTISTAS */}
+                  <iframe 
+                    src="https://docs.google.com/forms/d/e/1FAIpQLSyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy/viewform?embedded=true" 
+                    width="100%" 
+                    height="100%" 
+                    frameBorder="0" 
+                    marginHeight={0} 
+                    marginWidth={0}>
+                      Carregando…
+                  </iframe>
+                </div>
+              </DialogContent>
+            </Dialog>
+
           </div>
         </div>
       </section>
