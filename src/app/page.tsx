@@ -13,6 +13,7 @@ import { useToast } from '@/hooks/use-toast';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from '@/components/ui/input';
 
 const sellerSchema = z.object({
   processoAtual: z.string().min(10, 'Por favor, detalhe um pouco mais.'),
@@ -23,7 +24,9 @@ const sellerSchema = z.object({
   licenciamento: z.array(z.string()).refine((value) => value.some((item) => item), {
     message: 'Selecione pelo menos um tipo de licença.',
   }),
+  precoExclusiva: z.string().min(1, 'Por favor, selecione uma opção.'),
   descoberta: z.string().min(10, 'Por favor, detalhe um pouco mais.'),
+  colaboracao: z.string().min(1, 'Por favor, selecione uma opção.'),
   solucao: z.string().min(10, 'Por favor, detalhe um pouco mais.'),
   monetizacao: z.string().min(1, 'Por favor, selecione uma opção.'),
   focoLocal: z.string().min(1, 'Por favor, selecione uma opção.'),
@@ -36,11 +39,13 @@ const buyerSchema = z.object({
      message: 'Selecione pelo menos uma preferência.',
   }),
   confianca: z.string().min(1, 'Por favor, selecione uma opção.'),
+  medoCompra: z.string().min(10, 'Por favor, detalhe um pouco mais.'),
   preco: z.string().min(1, 'Por favor, selecione uma faixa de preço.'),
   solucao: z.string().min(10, 'Por favor, detalhe um pouco mais.'),
   pagamento: z.array(z.string()).refine((value) => value.some((item) => item), {
     message: 'Selecione pelo menos uma forma de pagamento.',
   }),
+  feedback: z.string().min(1, 'Por favor, selecione uma opção.'),
 });
 
 const formSchema = z.object({
@@ -72,7 +77,9 @@ export default function SurveyPage() {
         frustracao: '',
         ferramentas: [],
         licenciamento: [],
+        precoExclusiva: '',
         descoberta: '',
+        colaboracao: '',
         solucao: '',
         monetizacao: '',
         focoLocal: '',
@@ -82,9 +89,11 @@ export default function SurveyPage() {
         frustracao: '',
         descoberta: [],
         confianca: '',
+        medoCompra: '',
         preco: '',
         solucao: '',
         pagamento: [],
+        feedback: '',
       }
     },
   });
@@ -95,7 +104,6 @@ export default function SurveyPage() {
     setIsLoading(true);
     console.log('Dados da Pesquisa:', values);
     
-    // Simula uma chamada de API
     await new Promise(resolve => setTimeout(resolve, 1500));
     
     toast({
@@ -136,30 +144,28 @@ export default function SurveyPage() {
               className="w-full"
             >
               <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="seller">Vendedor (Beatmaker/Compositor)</TabsTrigger>
-                <TabsTrigger value="buyer">Comprador (Artista/MC)</TabsTrigger>
+                <TabsTrigger value="seller">Sou Compositor / Produtor</TabsTrigger>
+                <TabsTrigger value="buyer">Sou Artista / Intérprete</TabsTrigger>
               </TabsList>
               
               <TabsContent value="seller">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Perguntas para Vendedores</CardTitle>
+                    <CardTitle>Perguntas para Criadores</CardTitle>
                     <CardDescription>Sua perspectiva como criador é fundamental.</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-8">
-                    {/* Vendedor - Questão 1 */}
                     <FormField
                       control={form.control}
                       name="seller.processoAtual"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="font-semibold text-base">Me conte como você vende um beat hoje, do momento que você posta até receber o dinheiro.</FormLabel>
+                          <FormLabel className="font-semibold text-base">Como você comercializa uma composição sua hoje, desde a criação até o recebimento?</FormLabel>
                           <FormControl><Textarea placeholder="Descreva seu processo de venda..." {...field} /></FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
-                    {/* Vendedor - Questão 2 */}
                      <FormField
                       control={form.control}
                       name="seller.frustracao"
@@ -171,14 +177,13 @@ export default function SurveyPage() {
                         </FormItem>
                       )}
                     />
-                    {/* Vendedor - Questão 3 */}
                     <FormField
                       control={form.control}
                       name="seller.ferramentas"
                       render={() => (
                         <FormItem>
-                          <FormLabel className="font-semibold text-base">Quais plataformas você usa hoje? O que você gosta e não gosta nelas?</FormLabel>
-                          {['BeatStars', 'Instagram', 'YouTube', 'Outra'].map((item) => (
+                          <FormLabel className="font-semibold text-base">Que tipo de plataformas você usa hoje? O que você gosta e não gosta nelas?</FormLabel>
+                          {['Plataformas especializadas (Ex: BeatStars)', 'Redes Sociais (Instagram, TikTok)', 'YouTube', 'Contato direto (WhatsApp, E-mail)', 'Outra'].map((item) => (
                             <FormField
                               key={item}
                               control={form.control}
@@ -202,14 +207,13 @@ export default function SurveyPage() {
                         </FormItem>
                       )}
                     />
-                     {/* Vendedor - Questão 4 */}
                      <FormField
                       control={form.control}
                       name="seller.licenciamento"
                       render={() => (
                         <FormItem>
-                          <FormLabel className="font-semibold text-base">Que tipos de licença você vende?</FormLabel>
-                          {['MP3', 'WAV', 'Stems (Arquivos Separados)', 'Exclusiva'].map((item) => (
+                          <FormLabel className="font-semibold text-base">Que tipos de licença você costuma vender?</FormLabel>
+                          {['Leasing (não-exclusivo) com arquivo MP3', 'Leasing com arquivo WAV', 'Leasing com Stems (arquivos separados)', 'Licença Exclusiva (direitos totais)'].map((item) => (
                             <FormField
                               key={item}
                               control={form.control}
@@ -233,59 +237,89 @@ export default function SurveyPage() {
                         </FormItem>
                       )}
                     />
-                    {/* Vendedor - Questão 5 */}
-                    <FormField
+                     <FormField
                       control={form.control}
-                      name="seller.descoberta"
+                      name="seller.precoExclusiva"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="font-semibold text-base">Como os artistas te encontram hoje?</FormLabel>
-                          <FormControl><Textarea placeholder="Redes sociais, indicação, etc." {...field} /></FormControl>
-                           <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    {/* Vendedor - Questão 6 */}
-                    <FormField
-                      control={form.control}
-                      name="seller.solucao"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="font-semibold text-base">Se você tivesse um app 'mágico' para vender seus beats, o que ele obrigatoriamente teria?</FormLabel>
-                          <FormControl><Textarea placeholder="Pense em funcionalidades, facilidades, etc." {...field} /></FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    {/* Vendedor - Questão 7 */}
-                    <FormField
-                      control={form.control}
-                      name="seller.monetizacao"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="font-semibold text-base">A maioria das plataformas fica com 30% da venda (em planos gratuitos). Você acha isso justo? Qual seria o ideal?</FormLabel>
-                          <FormControl>
+                          <FormLabel className="font-semibold text-base">Como você define o preço para uma licença exclusiva?</FormLabel>
+                           <FormControl>
                             <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex flex-col space-y-2">
-                              <FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="justo" /></FormControl><FormLabel className="font-normal text-base">Acho 30% justo</FormLabel></FormItem>
-                              <FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="ideal_15" /></FormControl><FormLabel className="font-normal text-base">O ideal seria 10-15%</FormLabel></FormItem>
-                              <FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="ideal_0" /></FormControl><FormLabel className="font-normal text-base">O ideal seria 0% (ou taxa fixa)</FormLabel></FormItem>
+                              <FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="fixo" /></FormControl><FormLabel className="font-normal text-base">Tenho um preço fixo</FormLabel></FormItem>
+                              <FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="negocio" /></FormControl><FormLabel className="font-normal text-base">Eu negocio caso a caso</FormLabel></FormItem>
+                              <FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="nao_vendo" /></FormControl><FormLabel className="font-normal text-base">Ainda não vendo licenças exclusivas</FormLabel></FormItem>
                             </RadioGroup>
                           </FormControl>
                            <FormMessage />
                         </FormItem>
                       )}
                     />
-                     {/* Vendedor - Questão 8 */}
+                    <FormField
+                      control={form.control}
+                      name="seller.descoberta"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="font-semibold text-base">Como os artistas e intérpretes descobrem seu trabalho hoje?</FormLabel>
+                          <FormControl><Textarea placeholder="Redes sociais, indicação, etc." {...field} /></FormControl>
+                           <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="seller.colaboracao"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="font-semibold text-base">Você tem interesse em colaborar com outros compositores ou produtores?</FormLabel>
+                           <FormControl>
+                            <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex flex-col space-y-2">
+                              <FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="sim" /></FormControl><FormLabel className="font-normal text-base">Sim, ativamente</FormLabel></FormItem>
+                              <FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="as_vezes" /></FormControl><FormLabel className="font-normal text-base">Sim, ocasionalmente</FormLabel></FormItem>
+                              <FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="nao" /></FormControl><FormLabel className="font-normal text-base">Não, prefiro trabalhar sozinho</FormLabel></FormItem>
+                            </RadioGroup>
+                          </FormControl>
+                           <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="seller.solucao"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="font-semibold text-base">Se você tivesse uma plataforma "mágica" para suas criações, o que ela obrigatoriamente teria?</FormLabel>
+                          <FormControl><Textarea placeholder="Pense em funcionalidades, facilidades, segurança, etc." {...field} /></FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="seller.monetizacao"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="font-semibold text-base">Plataformas internacionais costumam ficar com 30% da venda. O que você acha disso?</FormLabel>
+                          <FormControl>
+                            <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex flex-col space-y-2">
+                              <FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="justo" /></FormControl><FormLabel className="font-normal text-base">Acho 30% justo pelo que oferecem</FormLabel></FormItem>
+                              <FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="ideal_15" /></FormControl><FormLabel className="font-normal text-base">O ideal seria entre 10-15%</FormLabel></FormItem>
+                              <FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="ideal_0" /></FormControl><FormLabel className="font-normal text-base">O ideal seria uma taxa fixa ou 0%</FormLabel></FormItem>
+                            </RadioGroup>
+                          </FormControl>
+                           <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                      <FormField
                       control={form.control}
                       name="seller.focoLocal"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="font-semibold text-base">Você vê vantagem em uma plataforma focada primeiro no mercado brasileiro?</FormLabel>
+                          <FormLabel className="font-semibold text-base">Você vê vantagem em uma plataforma focada no mercado brasileiro?</FormLabel>
                           <FormControl>
                             <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex flex-col space-y-2">
-                              <FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="sim" /></FormControl><FormLabel className="font-normal text-base">Sim, com certeza</FormLabel></FormItem>
-                              <FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="nao" /></FormControl><FormLabel className="font-normal text-base">Não, prefiro plataformas globais</FormLabel></FormItem>
+                              <FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="sim" /></FormControl><FormLabel className="font-normal text-base">Sim, com certeza (pelo idioma, suporte, pagamentos)</FormLabel></FormItem>
+                              <FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="nao" /></FormControl><FormLabel className="font-normal text-base">Não, prefiro plataformas globais pelo alcance</FormLabel></FormItem>
                               <FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="indiferente" /></FormControl><FormLabel className="font-normal text-base">É indiferente para mim</FormLabel></FormItem>
                             </RadioGroup>
                           </FormControl>
@@ -300,42 +334,39 @@ export default function SurveyPage() {
               <TabsContent value="buyer">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Perguntas para Compradores</CardTitle>
-                    <CardDescription>Sua jornada para encontrar o beat perfeito nos interessa.</CardDescription>
+                    <CardTitle>Perguntas para Artistas</CardTitle>
+                    <CardDescription>Sua jornada para encontrar a composição perfeita nos interessa.</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-8">
-                     {/* Comprador - Questão 1 */}
                      <FormField
                       control={form.control}
                       name="buyer.processoAtual"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="font-semibold text-base">Onde você procura beats para suas músicas hoje? Como é esse processo?</FormLabel>
-                          <FormControl><Textarea placeholder="YouTube, BeatStars, contato direto..." {...field} /></FormControl>
+                          <FormLabel className="font-semibold text-base">Onde você procura instrumentais e composições para suas músicas hoje?</FormLabel>
+                          <FormControl><Textarea placeholder="YouTube, Spotify, contato direto com produtores..." {...field} /></FormControl>
                            <FormMessage />
                         </FormItem>
                       )}
                     />
-                     {/* Comprador - Questão 2 */}
                      <FormField
                       control={form.control}
                       name="buyer.frustracao"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="font-semibold text-base">Qual é a sua maior dificuldade ao procurar e comprar um beat?</FormLabel>
-                          <FormControl><Textarea placeholder="Ex: Achar algo original, preços, confiança..." {...field} /></FormControl>
+                          <FormLabel className="font-semibold text-base">Qual é a sua maior dificuldade ao procurar e licenciar uma obra?</FormLabel>
+                          <FormControl><Textarea placeholder="Ex: Achar algo original, preços, burocracia, confiança..." {...field} /></FormControl>
                            <FormMessage />
                         </FormItem>
                       )}
                     />
-                     {/* Comprador - Questão 3 */}
                     <FormField
                       control={form.control}
                       name="buyer.descoberta"
                       render={() => (
                         <FormItem>
-                          <FormLabel className="font-semibold text-base">Como você prefere procurar um beat?</FormLabel>
-                           {['Por Gênero (Trap, Funk, etc)', "Por 'Type Beat' (Ex: L7nnon type beat)", 'Por Mood/Sentimento (Ex: triste, agressivo)', 'Por BPM (velocidade da música)'].map((item) => (
+                          <FormLabel className="font-semibold text-base">Como você prefere buscar uma nova composição?</FormLabel>
+                           {['Por Gênero Musical', "Por Artista de Referência (Ex: 'tipo L7nnon')", 'Por Mood/Sentimento (Ex: dançante, reflexiva)', 'Por Instrumentos', 'Por BPM (velocidade)'].map((item) => (
                             <FormField
                               key={item}
                               control={form.control}
@@ -359,62 +390,70 @@ export default function SurveyPage() {
                         </FormItem>
                       )}
                     />
-                    {/* Comprador - Questão 4 */}
                     <FormField
                       control={form.control}
                       name="buyer.confianca"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="font-semibold text-base">Você entende as diferenças de licenciamento (lease vs. exclusivo)? O que você mais teme ao comprar um beat?</FormLabel>
+                          <FormLabel className="font-semibold text-base">Você entende as diferenças de licenciamento (leasing vs. exclusividade)?</FormLabel>
                            <FormControl>
                             <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex flex-col space-y-2">
-                              <FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="sim_temor" /></FormControl><FormLabel className="font-normal text-base">Sim, e temo que o beat seja vendido para outros</FormLabel></FormItem>
-                              <FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="sim_sem_temor" /></FormControl><FormLabel className="font-normal text-base">Sim, e não tenho grandes temores</FormLabel></FormItem>
-                              <FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="nao" /></FormControl><FormLabel className="font-normal text-base">Não entendo bem as diferenças</FormLabel></FormItem>
+                              <FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="sim" /></FormControl><FormLabel className="font-normal text-base">Sim, entendo bem</FormLabel></FormItem>
+                              <FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="parcialmente" /></FormControl><FormLabel className="font-normal text-base">Entendo o básico, mas tenho dúvidas</FormLabel></FormItem>
+                              <FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="nao" /></FormControl><FormLabel className="font-normal text-base">Não, acho confuso</FormLabel></FormItem>
                             </RadioGroup>
                           </FormControl>
                            <FormMessage />
                         </FormItem>
                       )}
                     />
-                    {/* Comprador - Questão 5 */}
+                    <FormField
+                      control={form.control}
+                      name="buyer.medoCompra"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="font-semibold text-base">O que mais te causa insegurança ao licenciar uma composição online?</FormLabel>
+                          <FormControl><Textarea placeholder="Ex: O produtor vender pra outro, problemas com direitos autorais..." {...field} /></FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                     <FormField
                       control={form.control}
                       name="buyer.preco"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="font-semibold text-base">Quanto você costuma pagar por um beat (lease não-exclusivo)?</FormLabel>
+                          <FormLabel className="font-semibold text-base">Quanto você costuma pagar por uma licença não-exclusiva (leasing)?</FormLabel>
                            <FormControl>
                             <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex flex-col space-y-2">
-                              <FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="ate_100" /></FormControl><FormLabel className="font-normal text-base">Até R$ 100</FormLabel></FormItem>
-                              <FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="100_300" /></FormControl><FormLabel className="font-normal text-base">Entre R$ 100 e R$ 300</FormLabel></FormItem>
-                              <FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="mais_300" /></FormControl><FormLabel className="font-normal text-base">Mais de R$ 300</FormLabel></FormItem>
+                              <FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="ate_150" /></FormControl><FormLabel className="font-normal text-base">Até R$ 150</FormLabel></FormItem>
+                              <FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="150_400" /></FormControl><FormLabel className="font-normal text-base">Entre R$ 150 e R$ 400</FormLabel></FormItem>
+                              <FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="mais_400" /></FormControl><FormLabel className="font-normal text-base">Mais de R$ 400</FormLabel></FormItem>
+                              <FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="nao_pago" /></FormControl><FormLabel className="font-normal text-base">Normalmente não pago, busco opções gratuitas</FormLabel></FormItem>
                             </RadioGroup>
                           </FormControl>
                            <FormMessage />
                         </FormItem>
                       )}
                     />
-                    {/* Comprador - Questão 6 */}
                     <FormField
                       control={form.control}
                       name="buyer.solucao"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="font-semibold text-base">O que um app de compra de beats precisaria ter para fazer você parar de procurar no YouTube ou no Insta?</FormLabel>
-                          <FormControl><Textarea placeholder="Ex: Filtros melhores, mais confiança, pagamento fácil..." {...field} /></FormControl>
+                          <FormLabel className="font-semibold text-base">O que uma plataforma precisaria ter para ser sua principal fonte de composições?</FormLabel>
+                          <FormControl><Textarea placeholder="Ex: Filtros melhores, mais confiança, pagamento fácil, clareza nos contratos..." {...field} /></FormControl>
                            <FormMessage />
                         </FormItem>
                       )}
                     />
-                    {/* Comprador - Questão 7 */}
                      <FormField
                       control={form.control}
                       name="buyer.pagamento"
                       render={() => (
                         <FormItem>
-                          <FormLabel className="font-semibold text-base">Como você prefere pagar?</FormLabel>
-                           {['PIX', 'Cartão de Crédito', 'Boleto'].map((item) => (
+                          <FormLabel className="font-semibold text-base">Como você prefere pagar por uma licença?</FormLabel>
+                           {['PIX', 'Cartão de Crédito Parcelado', 'Boleto Bancário'].map((item) => (
                             <FormField
                               key={item}
                               control={form.control}
@@ -434,6 +473,23 @@ export default function SurveyPage() {
                               )}
                             />
                           ))}
+                           <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                     <FormField
+                      control={form.control}
+                      name="buyer.feedback"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="font-semibold text-base">Você gostaria de ter um canal para dar feedback ou pedir ajustes diretamente ao produtor pela plataforma?</FormLabel>
+                           <FormControl>
+                            <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex flex-col space-y-2">
+                              <FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="sim" /></FormControl><FormLabel className="font-normal text-base">Sim, seria um grande diferencial</FormLabel></FormItem>
+                              <FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="talvez" /></FormControl><FormLabel className="font-normal text-base">Talvez, se for simples de usar</FormLabel></FormItem>
+                              <FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="nao" /></FormControl><FormLabel className="font-normal text-base">Não, prefiro resolver por fora</FormLabel></FormItem>
+                            </RadioGroup>
+                          </FormControl>
                            <FormMessage />
                         </FormItem>
                       )}
