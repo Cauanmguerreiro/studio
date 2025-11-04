@@ -1,635 +1,176 @@
 'use client';
 
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Textarea } from '@/components/ui/textarea';
-import { Loader2, PartyPopper } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { useFirestore } from '@/firebase';
-import { addDoc, collection, serverTimestamp, type Firestore } from 'firebase/firestore';
-import { errorEmitter } from '@/firebase/error-emitter';
-import { FirestorePermissionError } from '@/firebase/errors';
+import { ArrowRight, CheckCircle, Search, ShieldCheck, Users, Wand2 } from 'lucide-react';
+import { compositions } from '@/lib/data';
+import { CompositionCard } from '@/components/composition-card';
+import { placeholderImages } from '@/lib/placeholder-images.json';
+import { GenreIcons } from '@/components/icons';
+import { genres } from '@/lib/data';
 
-
-const sellerSchema = z.object({
-  processoAtual: z.string().min(10, 'Por favor, detalhe um pouco mais.'),
-  frustracao: z.string().min(10, 'Por favor, detalhe um pouco mais.'),
-  ferramentas: z.array(z.string()).refine((value) => value.some((item) => item), {
-    message: 'Selecione pelo menos uma ferramenta.',
-  }),
-  licenciamento: z.array(z.string()).refine((value) => value.some((item) => item), {
-    message: 'Selecione pelo menos um tipo de licença.',
-  }),
-  precoExclusiva: z.string().min(1, 'Por favor, selecione uma opção.'),
-  descoberta: z.string().min(10, 'Por favor, detalhe um pouco mais.'),
-  colaboracao: z.string().min(1, 'Por favor, selecione uma opção.'),
-  solucao: z.string().min(10, 'Por favor, detalhe um pouco mais.'),
-  monetizacao: z.string().min(1, 'Por favor, selecione uma opção.'),
-  focoLocal: z.string().min(1, 'Por favor, selecione uma opção.'),
-});
-
-const buyerSchema = z.object({
-  processoAtual: z.string().min(10, 'Por favor, detalhe um pouco mais.'),
-  frustracao: z.string().min(10, 'Por favor, detalhe um pouco mais.'),
-  descoberta: z.array(z.string()).refine((value) => value.some((item) => item), {
-     message: 'Selecione pelo menos uma preferência.',
-  }),
-  confianca: z.string().min(1, 'Por favor, selecione uma opção.'),
-  medoCompra: z.string().min(10, 'Por favor, detalhe um pouco mais.'),
-  preco: z.string().min(1, 'Por favor, selecione uma faixa de preço.'),
-  solucao: z.string().min(10, 'Por favor, detalhe um pouco mais.'),
-  pagamento: z.array(z.string()).refine((value) => value.some((item) => item), {
-    message: 'Selecione pelo menos uma forma de pagamento.',
-  }),
-  feedback: z.string().min(1, 'Por favor, selecione uma opção.'),
-});
-
-const formSchema = z.object({
-  userType: z.enum(['seller', 'buyer']),
-  seller: sellerSchema.optional(),
-  buyer: buyerSchema.optional(),
-  nome: z.string().optional(),
-  nomeArtistico: z.string().optional(),
-  contato: z.string().optional(),
-  redesSociais: z.string().optional(),
-}).refine(data => {
-    if (data.userType === 'seller') return !!data.seller;
-    if (data.userType === 'buyer') return !!data.buyer;
-    return false;
-}, {
-    message: "Formulário inválido",
-});
-
-
-type FormValues = z.infer<typeof formSchema>;
-
-async function saveSurveyResponse(firestore: Firestore, values: FormValues) {
-    const surveyData = {
-        ...values,
-        createdAt: serverTimestamp(),
-    };
-    
-    const surveyCollection = collection(firestore, 'surveyResponses');
-    
-    return addDoc(surveyCollection, surveyData)
-      .catch((serverError) => {
-        const permissionError = new FirestorePermissionError({
-          path: surveyCollection.path,
-          operation: 'create',
-          requestResourceData: surveyData
-        }, serverError);
-        errorEmitter.emit('permission-error', permissionError);
-        // Re-throw to be caught by the calling function
-        throw permissionError;
-      });
-}
-
-export default function SurveyPage() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const { toast } = useToast();
-  const firestore = useFirestore();
-
-  const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      userType: 'seller',
-      seller: {
-        processoAtual: '',
-        frustracao: '',
-        ferramentas: [],
-        licenciamento: [],
-        precoExclusiva: '',
-        descoberta: '',
-        colaboracao: '',
-        solucao: '',
-        monetizacao: '',
-        focoLocal: '',
-      },
-      buyer: {
-        processoAtual: '',
-        frustracao: '',
-        descoberta: [],
-        confianca: '',
-        medoCompra: '',
-        preco: '',
-        solucao: '',
-        pagamento: [],
-        feedback: '',
-      },
-      nome: '',
-      nomeArtistico: '',
-      contato: '',
-      redesSociais: '',
-    },
-  });
-
-  const userType = form.watch('userType');
-
-  async function onSubmit(values: FormValues) {
-    if (!firestore) {
-        toast({
-            variant: "destructive",
-            title: "Uh oh! Algo deu errado.",
-            description: "A conexão com o banco de dados não foi estabelecida. Tente recarregar a página.",
-        });
-        return;
-    }
-
-    setIsLoading(true);
-    
-    try {
-        await saveSurveyResponse(firestore, values);
-        toast({
-          title: "Questionário enviado!",
-          description: "Muito obrigado pelo seu feedback valioso.",
-        });
-        setIsSubmitted(true);
-        form.reset();
-    } catch (error) {
-        console.error("Error writing document: ", error);
-        toast({
-          variant: "destructive",
-          title: "Uh oh! Algo deu errado.",
-          description: "Não foi possível enviar seu feedback. Tente novamente.",
-        });
-    } finally {
-        setIsLoading(false);
-    }
-  }
-
-  if (isSubmitted) {
-    return (
-      <div className="flex flex-col items-center justify-center text-center py-20">
-        <PartyPopper className="h-16 w-16 text-primary" />
-        <h1 className="mt-6 text-4xl font-bold tracking-tight">Obrigado!</h1>
-        <p className="mt-2 max-w-md text-lg text-muted-foreground">
-          Seu feedback é crucial para construirmos uma plataforma melhor para o futuro da música.
-        </p>
-      </div>
-    );
-  }
+export default function LandingPage() {
+  const heroImage = placeholderImages.find((img) => img.id === 'hero');
 
   return (
-    <div className="max-w-3xl mx-auto">
-      <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">O Futuro do Mercado Musical</h1>
-        <p className="mt-4 text-lg text-muted-foreground">
-          Ajude-nos a entender as necessidades da indústria musical respondendo a algumas perguntas.
-        </p>
-      </div>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)}>
-            <Tabs 
-              value={userType} 
-              onValueChange={(value) => form.setValue('userType', value as 'seller' | 'buyer')} 
-              className="w-full"
-            >
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="seller">Sou Compositor / Produtor</TabsTrigger>
-                <TabsTrigger value="buyer">Sou Artista / Intérprete</TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value="seller">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Perguntas para Criadores</CardTitle>
-                    <CardDescription>Sua perspectiva como criador é fundamental.</CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-8">
-                    <FormField
-                      control={form.control}
-                      name="seller.processoAtual"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="font-semibold text-base">Como você comercializa uma composição sua hoje, desde a criação até o recebimento?</FormLabel>
-                          <FormControl><Textarea placeholder="Descreva seu processo de venda..." {...field} /></FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                     <FormField
-                      control={form.control}
-                      name="seller.frustracao"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="font-semibold text-base">Qual é a sua maior frustração nesse processo? O que mais te irrita?</FormLabel>
-                          <FormControl><Textarea placeholder="Suas dores e frustrações..." {...field} /></FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="seller.ferramentas"
-                      render={() => (
-                        <FormItem>
-                          <FormLabel className="font-semibold text-base">Que tipo de plataformas você usa hoje? O que você gosta e não gosta nelas?</FormLabel>
-                          {['Plataformas especializadas (Ex: BeatStars)', 'Redes Sociais (Instagram, TikTok)', 'YouTube', 'Contato direto (WhatsApp, E-mail)', 'Outra'].map((item) => (
-                            <FormField
-                              key={item}
-                              control={form.control}
-                              name="seller.ferramentas"
-                              render={({ field }) => (
-                                <FormItem key={item} className="flex flex-row items-start space-x-3 space-y-0">
-                                  <FormControl>
-                                    <Checkbox
-                                      checked={field.value?.includes(item)}
-                                      onCheckedChange={(checked) => checked
-                                          ? field.onChange([...(field.value || []), item])
-                                          : field.onChange(field.value?.filter((v) => v !== item))}
-                                    />
-                                  </FormControl>
-                                  <FormLabel className="font-normal text-base">{item}</FormLabel>
-                                </FormItem>
-                              )}
-                            />
-                          ))}
-                           <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                     <FormField
-                      control={form.control}
-                      name="seller.licenciamento"
-                      render={() => (
-                        <FormItem>
-                          <FormLabel className="font-semibold text-base">Que tipos de licença você costuma vender?</FormLabel>
-                          {['Leasing (não-exclusivo) com arquivo MP3', 'Leasing com arquivo WAV', 'Leasing com Stems (arquivos separados)', 'Licença Exclusiva (direitos totais)'].map((item) => (
-                            <FormField
-                              key={item}
-                              control={form.control}
-                              name="seller.licenciamento"
-                              render={({ field }) => (
-                                <FormItem key={item} className="flex flex-row items-start space-x-3 space-y-0">
-                                  <FormControl>
-                                    <Checkbox
-                                      checked={field.value?.includes(item)}
-                                      onCheckedChange={(checked) => checked
-                                          ? field.onChange([...(field.value || []), item])
-                                          : field.onChange(field.value?.filter((v) => v !== item))}
-                                    />
-                                  </FormControl>
-                                  <FormLabel className="font-normal text-base">{item}</FormLabel>
-                                </FormItem>
-                              )}
-                            />
-                          ))}
-                           <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                     <FormField
-                      control={form.control}
-                      name="seller.precoExclusiva"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="font-semibold text-base">Como você define o preço para uma licença exclusiva?</FormLabel>
-                           <FormControl>
-                            <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex flex-col space-y-2">
-                              <FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="fixo" /></FormControl><FormLabel className="font-normal text-base">Tenho um preço fixo</FormLabel></FormItem>
-                              <FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="negocio" /></FormControl><FormLabel className="font-normal text-base">Eu negocio caso a caso</FormLabel></FormItem>
-                              <FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="nao_vendo" /></FormControl><FormLabel className="font-normal text-base">Ainda não vendo licenças exclusivas</FormLabel></FormItem>
-                            </RadioGroup>
-                          </FormControl>
-                           <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="seller.descoberta"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="font-semibold text-base">Como os artistas e intérpretes descobrem seu trabalho hoje?</FormLabel>
-                          <FormControl><Textarea placeholder="Redes sociais, indicação, etc." {...field} /></FormControl>
-                           <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="seller.colaboracao"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="font-semibold text-base">Você tem interesse em colaborar com outros compositores ou produtores?</FormLabel>
-                           <FormControl>
-                            <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex flex-col space-y-2">
-                              <FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="sim" /></FormControl><FormLabel className="font-normal text-base">Sim, ativamente</FormLabel></FormItem>
-                              <FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="as_vezes" /></FormControl><FormLabel className="font-normal text-base">Sim, ocasionalmente</FormLabel></FormItem>
-                              <FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="nao" /></FormControl><FormLabel className="font-normal text-base">Não, prefiro trabalhar sozinho</FormLabel></FormItem>
-                            </RadioGroup>
-                          </FormControl>
-                           <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="seller.solucao"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="font-semibold text-base">Se você tivesse uma plataforma "mágica" para suas criações, o que ela obrigatoriamente teria?</FormLabel>
-                          <FormControl><Textarea placeholder="Pense em funcionalidades, facilidades, segurança, etc." {...field} /></FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="seller.monetizacao"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="font-semibold text-base">Plataformas internacionais costumam ficar com 30% da venda. O que você acha disso?</FormLabel>
-                          <FormControl>
-                            <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex flex-col space-y-2">
-                              <FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="justo" /></FormControl><FormLabel className="font-normal text-base">Acho 30% justo pelo que oferecem</FormLabel></FormItem>
-                              <FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="ideal_15" /></FormControl><FormLabel className="font-normal text-base">O ideal seria entre 10-15%</FormLabel></FormItem>
-                              <FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="ideal_0" /></FormControl><FormLabel className="font-normal text-base">O ideal seria uma taxa fixa ou 0%</FormLabel></FormItem>
-                            </RadioGroup>
-                          </FormControl>
-                           <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                     <FormField
-                      control={form.control}
-                      name="seller.focoLocal"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="font-semibold text-base">Você vê vantagem em uma plataforma focada no mercado brasileiro?</FormLabel>
-                          <FormControl>
-                            <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex flex-col space-y-2">
-                              <FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="sim" /></FormControl><FormLabel className="font-normal text-base">Sim, com certeza (pelo idioma, suporte, pagamentos)</FormLabel></FormItem>
-                              <FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="nao" /></FormControl><FormLabel className="font-normal text-base">Não, prefiro plataformas globais pelo alcance</FormLabel></FormItem>
-                              <FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="indiferente" /></FormControl><FormLabel className="font-normal text-base">É indiferente para mim</FormLabel></FormItem>
-                            </RadioGroup>
-                          </FormControl>
-                           <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </CardContent>
-                </Card>
-              </TabsContent>
+    <div className="flex flex-col">
+      {/* Hero Section */}
+      <section className="relative h-[60vh] md:h-[70vh] flex items-center justify-center text-center text-white">
+        {heroImage && (
+            <Image
+            src={heroImage.imageUrl}
+            alt={heroImage.description}
+            data-ai-hint={heroImage.imageHint}
+            fill
+            className="object-cover -z-10 brightness-50"
+            priority
+            />
+        )}
+        <div className="container px-4">
+          <h1 className="text-4xl md:text-6xl font-bold tracking-tighter !leading-tight">
+            O Ecossistema da Música.<br/>Conectando Criadores e Artistas.
+          </h1>
+          <p className="mt-4 max-w-2xl mx-auto text-lg md:text-xl text-white/80">
+            Descubra, licencie e colabore em composições únicas com segurança e transparência. O futuro da propriedade intelectual na música começa aqui.
+          </p>
+          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Input
+              type="email"
+              placeholder="Digite seu melhor e-mail"
+              className="max-w-sm text-lg h-12 text-foreground"
+            />
+            <Button size="lg" className="w-full sm:w-auto font-bold text-lg">
+              Receber Acesso Antecipado <ArrowRight className="ml-2" />
+            </Button>
+          </div>
+          <p className="mt-2 text-sm text-white/60">Junte-se à lista de espera e seja o primeiro a saber.</p>
+        </div>
+      </section>
 
-              <TabsContent value="buyer">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Perguntas para Artistas</CardTitle>
-                    <CardDescription>Sua jornada para encontrar a composição perfeita nos interessa.</CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-8">
-                     <FormField
-                      control={form.control}
-                      name="buyer.processoAtual"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="font-semibold text-base">Onde você procura instrumentais e composições para suas músicas hoje?</FormLabel>
-                          <FormControl><Textarea placeholder="YouTube, Spotify, contato direto com produtores..." {...field} /></FormControl>
-                           <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                     <FormField
-                      control={form.control}
-                      name="buyer.frustracao"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="font-semibold text-base">Qual é a sua maior dificuldade ao procurar e licenciar uma obra?</FormLabel>
-                          <FormControl><Textarea placeholder="Ex: Achar algo original, preços, burocracia, confiança..." {...field} /></FormControl>
-                           <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="buyer.descoberta"
-                      render={() => (
-                        <FormItem>
-                          <FormLabel className="font-semibold text-base">Como você prefere buscar uma nova composição?</FormLabel>
-                           {['Por Gênero Musical', "Por Artista de Referência (Ex: 'tipo L7nnon')", 'Por Mood/Sentimento (Ex: dançante, reflexiva)', 'Por Instrumentos', 'Por BPM (velocidade)'].map((item) => (
-                            <FormField
-                              key={item}
-                              control={form.control}
-                              name="buyer.descoberta"
-                              render={({ field }) => (
-                                <FormItem key={item} className="flex flex-row items-start space-x-3 space-y-0">
-                                  <FormControl>
-                                    <Checkbox
-                                      checked={field.value?.includes(item)}
-                                      onCheckedChange={(checked) => checked
-                                          ? field.onChange([...(field.value || []), item])
-                                          : field.onChange(field.value?.filter((v) => v !== item))}
-                                    />
-                                  </FormControl>
-                                  <FormLabel className="font-normal text-base">{item}</FormLabel>
-                                </FormItem>
-                              )}
-                            />
-                          ))}
-                           <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="buyer.confianca"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="font-semibold text-base">Você entende as diferenças de licenciamento (leasing vs. exclusividade)?</FormLabel>
-                           <FormControl>
-                            <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex flex-col space-y-2">
-                              <FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="sim" /></FormControl><FormLabel className="font-normal text-base">Sim, entendo bem</FormLabel></FormItem>
-                              <FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="parcialmente" /></FormControl><FormLabel className="font-normal text-base">Entendo o básico, mas tenho dúvidas</FormLabel></FormItem>
-                              <FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="nao" /></FormControl><FormLabel className="font-normal text-base">Não, acho confuso</FormLabel></FormItem>
-                            </RadioGroup>
-                          </FormControl>
-                           <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="buyer.medoCompra"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="font-semibold text-base">O que mais te causa insegurança ao licenciar uma composição online?</FormLabel>
-                          <FormControl><Textarea placeholder="Ex: O produtor vender pra outro, problemas com direitos autorais..." {...field} /></FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="buyer.preco"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="font-semibold text-base">Quanto você costuma pagar por uma licença não-exclusiva (leasing)?</FormLabel>
-                           <FormControl>
-                            <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex flex-col space-y-2">
-                              <FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="ate_150" /></FormControl><FormLabel className="font-normal text-base">Até R$ 150</FormLabel></FormItem>
-                              <FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="150_400" /></FormControl><FormLabel className="font-normal text-base">Entre R$ 150 e R$ 400</FormLabel></FormItem>
-                              <FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="mais_400" /></FormControl><FormLabel className="font-normal text-base">Mais de R$ 400</FormLabel></FormItem>
-                              <FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="nao_pago" /></FormControl><FormLabel className="font-normal text-base">Normalmente não pago, busco opções gratuitas</FormLabel></FormItem>
-                            </RadioGroup>
-                          </FormControl>
-                           <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="buyer.solucao"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="font-semibold text-base">O que uma plataforma precisaria ter para ser sua principal fonte de composições?</FormLabel>
-                          <FormControl><Textarea placeholder="Ex: Filtros melhores, mais confiança, pagamento fácil, clareza nos contratos..." {...field} /></FormControl>
-                           <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                     <FormField
-                      control={form.control}
-                      name="buyer.pagamento"
-                      render={() => (
-                        <FormItem>
-                          <FormLabel className="font-semibold text-base">Como você prefere pagar por uma licença?</FormLabel>
-                           {['PIX', 'Cartão de Crédito Parcelado', 'Boleto Bancário'].map((item) => (
-                            <FormField
-                              key={item}
-                              control={form.control}
-                              name="buyer.pagamento"
-                              render={({ field }) => (
-                                <FormItem key={item} className="flex flex-row items-start space-x-3 space-y-0">
-                                  <FormControl>
-                                    <Checkbox
-                                      checked={field.value?.includes(item)}
-                                      onCheckedChange={(checked) => checked
-                                          ? field.onChange([...(field.value || []), item])
-                                          : field.onChange(field.value?.filter((v) => v !== item))}
-                                    />
-                                  </FormControl>
-                                  <FormLabel className="font-normal text-base">{item}</FormLabel>
-                                </FormItem>
-                              )}
-                            />
-                          ))}
-                           <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                     <FormField
-                      control={form.control}
-                      name="buyer.feedback"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="font-semibold text-base">Você gostaria de ter um canal para dar feedback ou pedir ajustes diretamente ao produtor pela plataforma?</FormLabel>
-                           <FormControl>
-                            <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex flex-col space-y-2">
-                              <FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="sim" /></FormControl><FormLabel className="font-normal text-base">Sim, seria um grande diferencial</FormLabel></FormItem>
-                              <FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="talvez" /></FormControl><FormLabel className="font-normal text-base">Talvez, se for simples de usar</FormLabel></FormItem>
-                              <FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="nao" /></FormControl><FormLabel className="font-normal text-base">Não, prefiro resolver por fora</FormLabel></FormItem>
-                            </RadioGroup>
-                          </FormControl>
-                           <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </CardContent>
+      {/* Featured Compositions Section */}
+      <section className="py-16 md:py-24 bg-background">
+        <div className="container px-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-center">Músicas em Destaque</h2>
+          <p className="mt-2 text-lg text-muted-foreground text-center max-w-xl mx-auto">
+            Explore uma seleção de nossas composições mais recentes e populares.
+          </p>
+          <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {compositions.slice(0, 4).map((comp) => (
+              <CompositionCard key={comp.id} composition={comp} />
+            ))}
+          </div>
+          <div className="text-center mt-12">
+            <Button variant="outline" size="lg">
+              Explorar Todo o Catálogo <ArrowRight className="ml-2" />
+            </Button>
+          </div>
+        </div>
+      </section>
+      
+      {/* Features Section */}
+      <section className="py-16 md:py-24 bg-muted">
+        <div className="container px-4">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div className="space-y-4">
+                <Badge variant="outline">Plataforma Completa</Badge>
+                <h2 className="text-3xl md:text-4xl font-bold">Tudo que você precisa em um só lugar</h2>
+                <p className="text-lg text-muted-foreground">
+                    Desde a busca pela batida perfeita até a formalização dos direitos autorais, a SONGNATION simplifica cada etapa do processo.
+                </p>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <Card className="p-6">
+                    <CardContent className="flex flex-col items-center text-center">
+                        <ShieldCheck className="h-10 w-10 text-primary mb-4" />
+                        <h3 className="font-bold text-lg">Licenciamento Seguro</h3>
+                        <p className="text-muted-foreground text-sm mt-1">Transações protegidas e contratos inteligentes para sua tranquilidade.</p>
+                    </CardContent>
                 </Card>
-              </TabsContent>
-            </Tabs>
-            
-            <Card className="mt-8">
-              <CardHeader>
-                <CardTitle>Informações de Contato (Opcional)</CardTitle>
-                <CardDescription>Caso queira participar de futuras entrevistas ou testes, deixe seu contato.</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    <FormField
-                    control={form.control}
-                    name="nome"
-                    render={({ field }) => (
-                        <FormItem>
-                        <FormLabel>Nome</FormLabel>
-                        <FormControl>
-                            <Input placeholder="Seu nome completo" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                        </FormItem>
-                    )}
-                    />
-                    <FormField
-                    control={form.control}
-                    name="nomeArtistico"
-                    render={({ field }) => (
-                        <FormItem>
-                        <FormLabel>Nome Artístico/Profissional</FormLabel>
-                        <FormControl>
-                            <Input placeholder="Seu nome na indústria" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                        </FormItem>
-                    )}
-                    />
-                </div>
-                <FormField
-                  control={form.control}
-                  name="contato"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Contato (E-mail ou WhatsApp)</FormLabel>
-                      <FormControl>
-                        <Input placeholder="seu.email@exemplo.com ou (99) 99999-9999" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="redesSociais"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Redes Sociais</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Link para seu Instagram, TikTok, etc." {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </CardContent>
-            </Card>
+                 <Card className="p-6">
+                    <CardContent className="flex flex-col items-center text-center">
+                        <Search className="h-10 w-10 text-primary mb-4" />
+                        <h3 className="font-bold text-lg">Busca Inteligente</h3>
+                        <p className="text-muted-foreground text-sm mt-1">Filtre por gênero, humor, BPM e encontre a composição ideal para seu projeto.</p>
+                    </CardContent>
+                </Card>
+                 <Card className="p-6">
+                    <CardContent className="flex flex-col items-center text-center">
+                        <Users className="h-10 w-10 text-primary mb-4" />
+                        <h3 className="font-bold text-lg">Colaboração</h3>
+                        <p className="text-muted-foreground text-sm mt-1">Conecte-se com outros talentos, co-crie e divida os royalties de forma justa.</p>
+                    </CardContent>
+                </Card>
+                 <Card className="p-6">
+                    <CardContent className="flex flex-col items-center text-center">
+                        <Wand2 className="h-10 w-10 text-primary mb-4" />
+                        <h3 className="font-bold text-lg">Ferramentas IA</h3>
+                        <p className="text-muted-foreground text-sm mt-1">Gere letras, otimize SEO e encontre inspiração com nossa suíte de IA.</p>
+                    </CardContent>
+                </Card>
+            </div>
+          </div>
+        </div>
+      </section>
 
-            <CardFooter className="mt-6">
-              <Button type="submit" disabled={isLoading} size="lg" className="w-full font-bold text-lg tracking-wider">
-                {isLoading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Enviando...
-                  </>
-                ) : (
-                  <>
-                    Enviar Feedback
-                  </>
-                )}
-              </Button>
-            </CardFooter>
-          </form>
-        </Form>
+      {/* Genres Section */}
+      <section className="py-16 md:py-24 bg-background">
+        <div className="container px-4 text-center">
+          <h2 className="text-3xl md:text-4xl font-bold">Explore por Gênero</h2>
+           <p className="mt-2 text-lg text-muted-foreground max-w-xl mx-auto">
+            Navegue por uma vasta biblioteca de gêneros musicais brasileiros e encontre seu próximo hit.
+          </p>
+          <div className="mt-12 flex flex-wrap justify-center gap-4">
+            {genres.map((genre) => {
+              const Icon = GenreIcons[genre as keyof typeof GenreIcons];
+              return (
+                <Badge
+                  key={genre}
+                  variant="outline"
+                  className="px-6 py-3 text-lg cursor-pointer hover:bg-accent"
+                >
+                  <Icon className="mr-2 h-5 w-5" />
+                  {genre}
+                </Badge>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+      
+      {/* Final CTA Section */}
+      <section className="py-20 md:py-32 bg-primary text-primary-foreground">
+        <div className="container px-4 text-center">
+          <h2 className="text-3xl md:text-4xl font-bold tracking-tight">Pronto para Revolucionar sua Música?</h2>
+          <p className="mt-4 max-w-xl mx-auto text-lg text-primary-foreground/80">
+            Junte-se à nossa comunidade de criadores e artistas visionários.
+          </p>
+          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Input
+              type="email"
+              placeholder="seu.email@exemplo.com"
+              className="max-w-sm text-lg h-12 bg-primary-foreground/10 border-primary-foreground/30 placeholder:text-primary-foreground/50 focus:bg-background focus:text-foreground"
+            />
+            <Button size="lg" variant="secondary" className="w-full sm:w-auto font-bold text-lg">
+                Garantir meu Acesso
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-muted py-8">
+        <div className="container px-4 flex flex-col sm:flex-row justify-between items-center text-sm text-muted-foreground">
+            <p>&copy; {new Date().getFullYear()} SONGNATION. Todos os direitos reservados.</p>
+            <div className="flex gap-4 mt-4 sm:mt-0">
+                <Button variant="link" className="text-muted-foreground">Termos de Serviço</Button>
+                <Button variant="link" className="text-muted-foreground">Política de Privacidade</Button>
+            </div>
+        </div>
+      </footer>
     </div>
   );
 }
